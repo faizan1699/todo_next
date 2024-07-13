@@ -1,5 +1,4 @@
+import CreateTodo from "./createtodo/page";
 export default function Home() {
-  return(
-     <main>Home index page</main>
-    );
+  return <CreateTodo />;
 }

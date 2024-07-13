@@ -21,8 +21,8 @@ const authnav = [
 ];
 
 const usernav = [
-    { name: 'Todos', href: '/todos' },
     { name: 'CreateTodo', href: '/createtodo' },
+    { name: 'Todos', href: '/todos' },
     { name: 'profile', href: '/profile' },
 ];
 
@@ -33,7 +33,7 @@ const adminnav = [
 const Navbar = () => {
 
     const router = useRouter();
-    
+
     const [userinfo, setUserInfo] = useState({});
     const [activelink, setActiveLink] = useState("");
     const [navmap, setNavmap] = useState(authnav);
@@ -113,7 +113,7 @@ const Navbar = () => {
                         </div>
 
                         <div className="flex items-center w-full nav_logo">
-                            <Link href={isadmin ? "/" : ""}>
+                            <Link href={isadmin === true || isadmin === false ? "/" : ""}>
                                 <Image
                                     alt="TODO APP"
                                     src={logo}
@@ -146,7 +146,7 @@ const Navbar = () => {
                             </div>
                         </div>
 
-                        {isadmin && <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                        {isadmin === true || isadmin === false && <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             {/* Profile dropdown */}
                             <Menu as="div" className="relative ml-3">
                                 <div className='flex items-center justify-between'>
