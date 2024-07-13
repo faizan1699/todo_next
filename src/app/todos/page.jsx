@@ -84,10 +84,8 @@ const Todo = () => {
           </div>
         ))}
       </div>
-       : 
-        <>
-          <h3 className="text-center text-4xl text-zinc-200 font-extrabold mb-5">NOT HAVE TODO</h3>
-        </>
+        :
+        <h3 className="text-center text-4xl text-zinc-200 font-extrabold mb-5">NOT HAVE TODO</h3>
       }
 
     </div>
