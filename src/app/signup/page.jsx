@@ -75,14 +75,12 @@ const Signup = () => {
 
       try {
         const response = await axios.post('/api/users/auth/register', input);
-        setMsg(response.data.message);
+        setMsg(response?.data?.message);
         setLoading(false);
         hideMsg();
         router.push("/login")
       } catch (error) {
-        console.log('Error during registration:', error);
-        console.log(error.data.message);
-        setLoading(false);
+            setLoading(false);
         hideMsg();
       }
     }

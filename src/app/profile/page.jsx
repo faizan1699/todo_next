@@ -16,7 +16,7 @@ const Profile = () => {
             // localStorage.setItem("userToken", data);
         }
         catch (error) {
-            console.log(error);
+           
         }
     }
     const fetchAllUser = async (e) => {

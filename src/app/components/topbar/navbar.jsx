@@ -64,7 +64,7 @@ const Navbar = () => {
         try {
             const response = await axios.post("/api/profile/usertype", { email });
             setIsAdmin(response?.data?.isAdmin);
-        } catch (error) { console.log('Error fetching user type:', error) }
+        } catch (error) { null }
     };
 
     useEffect(() => {
@@ -87,7 +87,7 @@ const Navbar = () => {
             const response = await axios.get("/api/users/auth/logout");
             localStorage.removeItem("userToken");
             alert(response?.data?.message);
-            setUserInfo({});
+            setUserInfo("");
             setIsAdmin(null);
             setNavmap(authnav);
             router.push("/login");
@@ -146,7 +146,7 @@ const Navbar = () => {
                             </div>
                         </div>
 
-                        {isadmin === true || isadmin === false && <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                        {isadmin !== null && <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                             {/* Profile dropdown */}
                             <Menu as="div" className="relative ml-3">
                                 <div className='flex items-center justify-between'>
@@ -161,7 +161,7 @@ const Navbar = () => {
                                     {userinfo &&
                                         <div className="flex text-white flex-col items-center justify-center pl-2">
                                             <div className="text-start">{userinfo.username}</div>
-                                            {isadmin && <div className="text-start" style={{ fontSize: 12 }}>{isadmin === true ? "Admin" : "User"}</div>}
+                                            <div className="text-start text-green-500 underline" style={{ fontSize: 12 }}>{isadmin === true ? "Admin" : "User"}</div>
                                         </div>}
                                 </div>
                                 <MenuItems

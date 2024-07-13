@@ -52,8 +52,7 @@ const CreateTodo = () => {
       const email = y.email;
       try {
         const response = await axios.post("/api/users/userdata/createtodo", { ...input, email: email });
-        console.log(response);
-        setMsg(response.data.message);
+        setMsg(response?.data?.message);
         setLoading(false);
         setInput({
           title: "",
@@ -61,8 +60,7 @@ const CreateTodo = () => {
         })
       }
       catch (error) {
-        console.log(error);
-        setMsg(error.response.data.message);
+           setMsg(error?.response?.data?.message);
         setLoading(false);
       }
     }

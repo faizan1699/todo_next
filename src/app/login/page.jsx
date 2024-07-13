@@ -67,8 +67,7 @@ const Login = () => {
                 console.log(response)
                 const userobject = response?.data?.userdata;
                 const data = JSON.stringify(userobject)
-                
-                console.log(data)
+         
                 localStorage.setItem("userToken", data);
                 
                 setLoading(false);
@@ -76,7 +75,6 @@ const Login = () => {
                     router.push('/');
                 }, 2000);
             } catch (error) {
-                setMsg(error.response.data.message);
                 setLoading(false);
             }
         }

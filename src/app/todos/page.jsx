@@ -22,11 +22,10 @@ const Todo = () => {
     setLoading(true);
     try {
       const response = await axios.get("/api/users/userdata/gettodos");
-      setTodos(response.data.todos)
+      setTodos(response?.data?.todos)
       setLoading(false);
     }
     catch (error) {
-      console.log(error);
       setLoading(false);
     }
   };
@@ -35,12 +34,11 @@ const Todo = () => {
     setLoading(true);
     try {
       const response = await axios.delete("/api/users/userdata/gettodos", { data: { id } });
-      setTodos(response.data.todos)
-      setDelMsg(response.data.message);
+      setTodos(response?.data?.todos)
+      setDelMsg(response?.data?.message);
       setLoading(false);
     }
     catch (error) {
-      console.log(error);
       setLoading(false);
       setDelMsg(error.response.data.message);
     }
@@ -76,9 +74,13 @@ const Todo = () => {
             </div>
             <div className="px-6 pt-4 pb-2 flex justify-between items-center text-xs">
               <span className="inline-block cursor-pointer bg-gray-200 rounded-full px-3 py-1 font-semibold text-gray-700 ">Created at: {formatDate(todo.createdat)}</span>
-              <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => deleteTodo(index, todo._id)} >
-                <FontAwesomeIcon className="cursor-pointer" icon={faTrashCan} />
-                <FontAwesomeIcon className="cursor-pointer" icon={faEdit} />
+              <div className="flex">
+                <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => deleteTodo(index, todo._id)} >
+                  <FontAwesomeIcon className="cursor-pointer" icon={faTrashCan} />
+                </div>
+                <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => deleteTodo(index, todo._id)} >
+                  <FontAwesomeIcon className="cursor-pointer" icon={faEdit} />
+                </div>
               </div>
             </div>
           </div>
