@@ -35,7 +35,6 @@ export async function POST(req) {
       description,
       iscompleted,
       createdat: currentDateTime.toJSDate(),
-      updatedat: currentDateTime.toJSDate(),
     };
 
     const response = NextResponse.json({
@@ -45,9 +44,57 @@ export async function POST(req) {
     });
 
     return response;
-
   } catch (error) {
     console.log(error.message);
+    return NextResponse.json(
+      {
+        message: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req) {
+  await connect();
+  try {
+    const reqbody = await req.json();
+    const { id, title, description, iscompleted } = reqbody;
+    const todo = await TodoModel.findById(id);
+
+    if (!todo) {
+      return NextResponse.json({ message: "Todo not found" }, { status: 404 });
+    }
+
+    // Update todo fields
+    todo.title = title;
+    todo.description = description; // Corrected typo here
+    todo.iscompleted = iscompleted;
+
+    // Update updatedat timestamp
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const currentDateTime = DateTime.now().setZone(userTimezone);
+    todo.updatedat = currentDateTime.toJSDate();
+
+    // Save the updated todo
+    await todo.save();
+    const todos = {
+      title,
+      description,
+      iscompleted,
+      createdat: "null",
+      updatedat: currentDateTime.toJSDate(),
+    };
+
+    const response = NextResponse.json({
+      message: "todo Updated successfully",
+      success: true,
+      todos,
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
     return NextResponse.json(
       {
         message: error.message,

@@ -74,8 +74,11 @@ const Login = () => {
                 setTimeout(() => {
                     router.push('/');
                 }, 2000);
+
             } catch (error) {
                 setLoading(false);
+                setMsg(error.response.data.message)
+                console.log("eror", error)
             }
         }
     };
@@ -117,7 +120,7 @@ const Login = () => {
                                     </Link>
                                 </div>
                             </div>
-                            <div className="mt-2 flex border border-gray-300 rounded-md ">
+                            <div className="mt-2 flex border border-gray-300 rounded-md bg-white">
                                 <input
                                     name="password"
                                     type={passtype}

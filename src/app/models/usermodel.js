@@ -25,12 +25,19 @@ const userSchema = mongoose.Schema({
   otp: {
     type: Number,
   },
+  userUpdatedby: {
+    type: String,
+  },
+  userUpdatedOn: {
+    type: String,
+  },
 
   forgetpasswordtoken: String,
   forgetpasswordexpiry: { type: Date },
 
   verifyemailtoken: String,
   verifyemailtokenexpiry: { type: Date },
+
 });
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);

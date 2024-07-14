@@ -78,9 +78,18 @@ const Signup = () => {
         setMsg(response?.data?.message);
         setLoading(false);
         hideMsg();
-        router.push("/login")
+        setInput({
+          username: '',
+          email: '',
+          password: ''
+        });
+
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+
       } catch (error) {
-            setLoading(false);
+        setLoading(false);
         hideMsg();
       }
     }
@@ -122,7 +131,7 @@ const Signup = () => {
                 <label htmlFor="password" className={labelClasses}>Password</label>
 
               </div>
-              <div className="mt-1 flex border border-gray-300 rounded-md">
+              <div className="mt-1 flex border border-gray-300 rounded-md bg-white">
                 <input name="password" type={passtype} value={input.password} onChange={handleInputChange} autoComplete="current-password" className="px-1 block w-full rounded-md py-2 text-red-900 shadow-sm placeholder:text-gray-300  sm:text-sm sm:leading-6" placeholder='password' />
                 <div className="flex items-center justify-center" onClick={handleShowpassword}>
                   <FontAwesomeIcon className='px-1' icon={passtype === "password" ? faEye : faEyeSlash} />

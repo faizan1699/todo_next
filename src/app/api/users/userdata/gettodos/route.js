@@ -26,24 +26,21 @@ export async function GET(req) {
     } catch (error) {
       console.error("JWT Verification Error:", error.message);
       return NextResponse.json(
-        { message: "Invalid JWT token" },
+        { message: error.message },
         { status: 401 }
       );
     }
 
     const email = decodedToken.email;
 
-    // Find the user by email
     const user = await User.findOne({ email });
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    // Find todos associated with the user
     const todos = await TodoModel.find({ user: user._id });
 
-    // Return todos as JSON response
     return NextResponse.json({
       success: true,
       todos,

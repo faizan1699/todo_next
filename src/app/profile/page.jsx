@@ -1,9 +1,9 @@
 "use client";
 
 import axios from "axios";
+import { useEffect } from "react";
 
 const Profile = () => {
-
 
     const fetchUser = async () => {
 
@@ -16,7 +16,7 @@ const Profile = () => {
             // localStorage.setItem("userToken", data);
         }
         catch (error) {
-           
+
         }
     }
     const fetchAllUser = async (e) => {

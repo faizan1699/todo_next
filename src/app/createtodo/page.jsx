@@ -13,6 +13,8 @@ const CreateTodo = () => {
   const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
   const [msg, setMsg] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [todosUpdated, setTodosUpdated] = useState(false);
+  const [edit, setEdit] = useState(true);
   const [input, setInput] = useState({
     title: "",
     description: ""
@@ -58,23 +60,28 @@ const CreateTodo = () => {
           title: "",
           description: ""
         })
+        setTodosUpdated(true);
       }
       catch (error) {
-           setMsg(error?.response?.data?.message);
+        setMsg(error?.response?.data?.message);
         setLoading(false);
       }
     }
-
+    setTimeout(() => {
+      setMsg(null);
+    }, 5000);
   };
 
   return (
-    <div>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      {edit && <div className=" bg-gray-600 rounded-lg mb-3 py-3  px-2">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           {msg && <p className="mt-1 text-center font-bold text-red-500">{msg}</p>}
         </div>
 
-        <div className="mt-10 sm:mx-auto w-full sm:max-w-sm lg:w-3/4">
+        <p className="mt-1 text-gray-400 text-extrabold text-3xl text-center font-bold">CREATE TODO</p>
+        <div className="mt-10  rounded-lg sm:mx-auto md:w-9/12 w-full">
           <form method="POST" onSubmit={handleSavetodo} className="space-y-3">
             <div>
               <label htmlFor="title" className={labelClasses}>
@@ -86,7 +93,7 @@ const CreateTodo = () => {
                   type="text"
                   value={input.title}
                   onChange={handleInputChange}
-                  className="px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                  className="px-2  w-full rounded-md border-0 py-3 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                   placeholder="Enter title here"
                 />
               </div>
@@ -102,7 +109,7 @@ const CreateTodo = () => {
                   maxLength={maxLength}
                   value={input.description}
                   onChange={handleInputChange}
-                  className="resize-y px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                  className="resize-y px-2  w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                   placeholder="Enter description here"
                 />
               </div>
@@ -124,11 +131,12 @@ const CreateTodo = () => {
             </div>
           </form>
         </div>
+      </div>}
 
-        <Todo />
+      <Todo setEdit={setEdit} refreshTodos={todosUpdated} setTodosUpdated={setTodosUpdated} />
 
-      </div>
     </div>
+
   );
 };
 

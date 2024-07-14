@@ -15,9 +15,7 @@ export async function POST(req) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return NextResponse.json({
-        message: "user not found",
-      });
+      return NextResponse.json({ message: "user not found" }, { status: 404 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -35,11 +33,11 @@ export async function POST(req) {
       email: user.email,
       admin: user.isAdmin,
     };
-    
+
     const token = await jwt.sign(tokenData, process.env.JWT_SECRET, {
       expiresIn: "10d",
     });
-    
+
     const userdata = {
       userId: user._id,
       username: user.username,
@@ -51,12 +49,12 @@ export async function POST(req) {
       message: "login successfully",
       success: true,
       userdata,
-      token
+      token,
     });
 
     await response.cookies.set("token", token, {
       httpOnly: true,
-      maxAge: 10 * 24 * 60 * 60, 
+      maxAge: 10 * 24 * 60 * 60,
     });
 
     return response;
