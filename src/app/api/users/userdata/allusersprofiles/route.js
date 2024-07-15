@@ -41,26 +41,31 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     const reqbody = await req.json();
-    const { id, email, useremail, username, emailverify, isadmin, updatedby } =
-      reqbody;
+    const { id, email, username, emailverify, isAdmin, updatedby } = reqbody;
+
     console.log(id);
-    console.log(useremail);
+    console.log(email);
+    console.log(updatedby);
 
-    const isuser = await User.findOne({ useremail });
+    const isuser = await User.findById({ _id: id });
 
-    if (isuser) {
+    if (!isuser) {
       return NextResponse.json({
-        message: "user found",
+        message: "user not found",
       });
     }
-    // const isAdmin = await User.isAdmin;
-    // if (!isAdmin) {
-    //   return NextResponse.json({
-    //     message: "only admin authorized",
-    //   });
-    // }
 
-    const user = await User.findById(id);
+    const Admin = await User.findOne({ email: updatedby });
+    if (!Admin) {
+      return NextResponse.json(
+        {
+          message: "only admin authorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const user = await User.findById({ _id: id });
 
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const currentDateTime = DateTime.now().setZone(userTimezone);
@@ -68,7 +73,7 @@ export async function PUT(req) {
     user.email = email;
     user.username = username;
     user.isemailverified = emailverify;
-    user.isAdmin = isadmin;
+    user.isAdmin = isAdmin;
     user.userUpdatedby = updatedby;
     user.userUpdatedOn = currentDateTime.toJSDate();
 
@@ -77,7 +82,7 @@ export async function PUT(req) {
     const usersdata = {
       id,
       email,
-      isAdmin: isadmin,
+      isAdmin: isAdmin,
       username,
       isemailverified: emailverify,
       userUpdatedOn: currentDateTime.toJSDate(),

@@ -15,6 +15,7 @@ const Users = () => {
     const fieldClass = "p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-500";
     const inputclasses = "px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6";
 
+    const [msg, setMsg] = useState(null);
     const [userdata, setUserData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [updateloading, setUpdateLoading] = useState(false);
@@ -22,9 +23,10 @@ const Users = () => {
     const [updateuser, setUpdateUser] = useState({
         email: "",
         username: "",
-        emailverify: false,
-        isadmin: false,
-        updatedby: ""
+        isemailverified: "",
+        isAdmin: "",
+        updatedby: "",
+        id: ""
     })
 
     const handleInputChange = (e) => {
@@ -33,6 +35,14 @@ const Users = () => {
             ...updateuser,
             [name]: value
         })
+
+        if (name === "isAdmin") {
+            console.log(updateuser.isAdmin)
+        }
+        if (name === "isemailverified") {
+            console.log(updateuser.isemailverified)
+        }
+
     }
 
     useEffect(() => {
@@ -49,7 +59,6 @@ const Users = () => {
             try {
                 const response = await axios.post("/api/users/userdata/allusersprofiles", { email: email });
                 setUserData(response?.data?.usersdata);
-                console.log(response);
                 setLoading(false);
             }
             catch (error) {
@@ -64,41 +73,44 @@ const Users = () => {
 
     useEffect(() => {
         setUpdateUser({
-            email: uservalue.email,
-            username: uservalue.username,
-            isadmin: uservalue.isadmin,
-            emailverify: uservalue.emailverify
+            email: uservalue.email || "",
+            isAdmin: uservalue.isAdmin || false,
+            username: uservalue.username || "",
+            isemailverified: uservalue.isemailverified || false,
+            id: uservalue.id || ""
         })
     }, [uservalue])
 
 
     const handelUserEdit = async (id, email, username, isAdmin, isemailverified) => {
-        setUserValue({ id, email, username, isAdmin, isemailverified });
+        setUserValue({ id, username, email, isAdmin, isemailverified });
     }
 
     const saveEditedUser = async (e, id) => {
         e.preventDefault();
-        // id, email, username, emailverify, isadmin
+        // id, email, username, isemailverified, isadmin
         if (email) {
 
-            setLoading(true);
+            setUpdateLoading(true);
             try {
                 const response = await axios.put("/api/users/userdata/allusersprofiles", {
                     email: updateuser.email,
                     username: updateuser.username,
-                    emailverify: updateuser.emailverify,
-                    isadmin: updateuser.isadmin,
+                    emailverify: updateuser.isemailverified,
+                    isAdmin: updateuser.isAdmin,
                     updatedby: email,
-                    useremail: email,
-                    id: id
+                    id: updateuser.id
                 });
                 setUserData(response?.data?.usersdata);
-                console.log(response);
-                setLoading(false);
+                setMsg(response.data.message);
+                setUpdateLoading(false);
+                // console.log(response);
+                fetchAllUsers();
             }
             catch (error) {
-                console.log(error)
-                setLoading(false);
+                // console.log(error)
+                setMsg(error.response.data.message);
+                setUpdateLoading(false);
             }
         }
     }
@@ -111,8 +123,24 @@ const Users = () => {
 
             <div className=" sm:mx-auto sm:w-full sm:max-w-sm bg-slate-300 rounded-lg my-10 px-4 py-10">
                 <p className="text-center text-2xl font-extrabold text-zinc-500">Update User</p>
+                {msg && <p className="text-center text-md font-extrabold text-red-500">{msg}</p>}
                 <form method="POST" onSubmit={saveEditedUser}>
 
+                    <div className="mt-2">
+                        <label htmlFor="user id" className={labelClasses}>User Id</label>
+                        <div >
+                            <input
+                                name="id"
+                                type="text"
+                                value={updateuser.id}
+                                onChange={handleInputChange}
+                                className={inputclasses}
+                                placeholder='user id'
+                                autoComplete="new-id"
+                                readOnly
+                            />
+                        </div>
+                    </div>
                     <div className="mt-2">
                         <label htmlFor="username" className={labelClasses}>Username</label>
                         <div >
@@ -123,6 +151,7 @@ const Users = () => {
                                 onChange={handleInputChange}
                                 className={inputclasses}
                                 placeholder='username'
+                                autoComplete="new-username"
                             />
                         </div>
                     </div>
@@ -136,6 +165,7 @@ const Users = () => {
                                 onChange={handleInputChange}
                                 className={inputclasses}
                                 placeholder='email'
+                                autoComplete="new-wmail"
                             />
                         </div>
                     </div>
@@ -143,27 +173,27 @@ const Users = () => {
                     <div className="mt-2">
                         <label htmlFor="for admin " className={labelClasses} >Set Admin Status</label>
                         <select
-                            name="isadmin"
-                            value={updateuser.isadmin}
+                            name="isAdmin"
+                            value={updateuser.isAdmin}
                             onChange={handleInputChange}
                             className={inputclasses}
                         >
-                            <option disabled defaultValue>Choose Admin Status</option>
-                            <option value="false">Set User</option>
-                            <option value="true">Set Admin</option>
+                            <option disabled selected>Choose User status</option>
+                            <option value={true}>Set Admin</option>
+                            <option value={false}>Set User</option>
                         </select>
                     </div>
                     <div className="mt-2">
                         <label htmlFor="email verify" className={labelClasses} >Verfiy email</label>
                         <select
-                            name="emailverify"
+                            name="isemailverified"
                             value={updateuser.emailverify}
                             onChange={handleInputChange}
                             className={inputclasses}
                         >
                             <option disabled selected>Choose email status</option>
-                            <option value="true">Veryfied</option>
-                            <option value="false">Not verified</option>
+                            <option value={true}>Veryfied</option>
+                            <option value={false}>Not verified</option>
                         </select>
                     </div>
 
@@ -214,7 +244,7 @@ const Users = () => {
                                     (<tbody className="divide-y divide-gray-300 ">
                                         {userdata && userdata.map((data, index) => (
 
-                                            <tr className="bg-white transition-all duration-500 hover:bg-gray-50">
+                                            <tr key={index} className="bg-white transition-all duration-500 hover:bg-gray-50">
                                                 <td className={fieldClass}>{data._id}</td>
                                                 <td className={fieldClass}>{data.username}</td>
                                                 <td className={fieldClass}>{data.email}</td>
@@ -236,7 +266,7 @@ const Users = () => {
                                                         </button>
                                                         <button className="p-2 rounded-full  group transition-all duration-500  flex item-center">
                                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path className="stroke-black " d="M10.0161 14.9897V15.0397M10.0161 9.97598V10.026M10.0161 4.96231V5.01231" stroke="black" stroke-width="2.5" stroke-linecap="round"></path>
+                                                                <path className="stroke-black " d="M10.0161 14.9897V15.0397M10.0161 9.97598V10.026M10.0161 4.96231V5.01231" stroke="black" strokeWidth="4.5" strokeLinecap="round"></path>
                                                             </svg>
                                                         </button>
                                                     </div>
@@ -247,23 +277,30 @@ const Users = () => {
                                     ) : (
                                         <tbody>
                                             {loading ? (
-                                                <tr className={`flex justify-center w-full items-center ${fieldClass}`}>
+                                                <tr className={`flex justify-center items-center ${fieldClass}`}>
                                                     <td className="text-center" colSpan="4">
-                                                        <Image
-                                                            src={loader}
-                                                            className="block mx-auto"
-                                                            width={70}
-                                                            height={70}
-                                                            alt="loader"
-                                                        />
+                                                        <div className="flex justify-center items-center h-full">
+                                                            <Image
+                                                                src={loader}
+                                                                className="block mx-auto"
+                                                                width={70}
+                                                                height={70}
+                                                                alt="loader"
+                                                            />
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ) : (
                                                 <tr className="text-nowrap text-center w-full">
-                                                    <td colSpan="4">Not user found in database</td>
+                                                    <td colSpan="4">
+                                                        <div className="flex justify-center items-center h-full">
+                                                            Not user found in database
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             )}
                                         </tbody>
+
                                     )
                                 }
                             </table>
