@@ -1,28 +1,30 @@
 "use client"
-
 import React, { useEffect, useState } from 'react';
+
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
-
-import loader from '../assets/loader/loader.gif';
 import Image from 'next/image';
+import loader from '../assets/loader/loader.gif';
+
+import { toast } from 'react-toastify';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt, faEdit, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 
-const Todo = ({ refreshTodos , setEdit }) => {
+const Todo = ({ refreshTodos, setEdit }) => {
 
   const maxLength = 1050;
   const labelClasses = "block text-sm font-medium leading-6 text-white ";
-
-  const [msg, setMsg] = useState(null);
+  const readmoreclass = "text-red-500 hover:underline focus:outline-none ml-2";
+  const readlessclass = "text-blue-500 hover:underline focus:outline-none ml-2";
 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formloading, setFormLoading] = useState(false);
-  const [delmsg, setDelMsg] = useState(null);
-  const [expandedIndex, setExpandedIndex] = useState(-1);
+  const [expandedtitle, setExpandedTitle] = useState(-1);
   const [isedit, setIsEdit] = useState(false);
+  const [truncdesc, setTruncDesc] = useState(-1);
   const [todovalue, setTodoValue] = useState({});
+  const [charCount, setCharCount] = useState(0);
 
   const [input, setInput] = useState({
     title: "",
@@ -30,7 +32,6 @@ const Todo = ({ refreshTodos , setEdit }) => {
     iscompleted: ""
   });
 
-  const [charCount, setCharCount] = useState(0);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +49,6 @@ const Todo = ({ refreshTodos , setEdit }) => {
         [name]: value
       });
     }
-    setMsg(null);
   };
 
 
@@ -72,18 +72,15 @@ const Todo = ({ refreshTodos , setEdit }) => {
     try {
       const response = await axios.delete('/api/users/userdata/gettodos', { data: { id } });
       setTodos(response?.data?.todos);
-      setDelMsg(response?.data?.message);
+      toast.success(response?.data?.message);
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      setDelMsg(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message);
     }
-    setTimeout(() => {
-      setDelMsg(null);
-    }, 3000);
+
   };
   useEffect(() => {
-    // Update input state whenever todovalue changes
     setInput({
       title: todovalue.title || "",
       description: todovalue.description || ""
@@ -93,6 +90,7 @@ const Todo = ({ refreshTodos , setEdit }) => {
   const updateTodo = (index, id, title, description) => {
     setIsEdit(true);
     setEdit(false);
+    toast.info("now you can edit user");
     setTodoValue({
       id, title, description
     })
@@ -109,7 +107,7 @@ const Todo = ({ refreshTodos , setEdit }) => {
         iscompleted: input.iscompleted,
       });
       setTodos(response?.data?.todos);
-      setMsg(response?.data?.message);
+      toast.success(response?.data?.message);
       setFormLoading(false);
       handleGetTodo();
       setInput({
@@ -121,17 +119,22 @@ const Todo = ({ refreshTodos , setEdit }) => {
     } catch (error) {
       console.log(error);
       setFormLoading(false);
-      setMsg(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message);
     }
 
-    setTimeout(() => {
-      setMsg(null);
-    }, 5000);
   }
 
-  const toggleTruncate = (index) => {
-    setExpandedIndex(expandedIndex === index ? 1 : index);
+  const toggleTruncateTitle = (index) => {
+    setExpandedTitle(expandedtitle === index ? 1 : index);
   };
+
+  const toggleTruncateDescription = (index) => {
+    setTruncDesc(truncdesc === index ? 2 : index);
+  }
+  const HideTodoform = () => {
+    setIsEdit(false);
+    setEdit(true);
+  }
 
   function formatDate(date) {
     const formattedDate = new Date(date);
@@ -144,10 +147,13 @@ const Todo = ({ refreshTodos , setEdit }) => {
 
     <>
 
-      {isedit && <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-gray-800 my-3 rounded-lg">
-        <h3 className='text-center text-4xl text-extrabold text-gray-400'>Update Todo</h3>
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {msg && <p className="mt-1 text-center font-bold text-red-500">{msg}</p>}
+      {isedit && <div className="flex min-h-full flex-1 flex-col justify-center px-2 py-12 bg-gray-800 my-3 rounded-lg">
+        <div className="flex justify-between items-center">
+          <div className='updatetodoDivempty'></div>
+          <h3 className='text-center text-4xl text-nowrap text-extrabold text-gray-400 mx-auto'>Update Todo</h3>
+          <div className='text-red-800 pr-10 ml-2'>
+            <FontAwesomeIcon className='border bg-white rounded-full' style={{ padding: "5 6" }} onClick={HideTodoform} icon={faXmark} />
+          </div>
         </div>
 
         <div className="mt-10 sm:mx-auto md:w-9/12 w-full">
@@ -202,64 +208,95 @@ const Todo = ({ refreshTodos , setEdit }) => {
         </div>
 
       </div>}
-      <div className="border-2 p-3 mt-8 md:mx-10 bg-zinc-100 rounded-lg">
-        <h3 className="text-center text-5xl text-zinc-300 font-extrabold mb-5">TODOS</h3>
-        <h3 className="text-center subpixel-antialiased underline text-zinc-500 text-1xl font-extrabold mb-5 cursor-pointer" onClick={handleGetTodo}>
-          Reload
-        </h3>
-        {msg && <p className="mt-1 text-center font-bold text-red-500">{msg}</p>}
-        {delmsg && (
-          <h3 className="text-center subpixel-antialiased underline text-red-500 text-md font-extrabold mb-5 cursor-pointer">{delmsg}</h3>
-        )}
 
-        <div className="flex my-3 justify-center">{loading ? <Image width={50} src={loader} alt="loader" /> : null}</div>
+      <div className="mt-10 sm:mx-auto md:w-12/12 py-10 w-full bg-gray-800 rounded-lg px-2 flex justify-center">
 
-        {todos?.length > 0 ? (
-          <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 justify-center">
-            {todos.map((todo, index) => (
-              <div key={index} className="max-w-sm bg-white rounded-lg overflow-hidden shadow-lg">
-                <div className="px-6 py-4">
-                  <div className="font-bold text-xl mb-2 cursor-pointer">
-                    {/* Conditional rendering of truncated or full title */}
-                    {expandedIndex === index ? (
-                      <div>
-                        {todo.title}
-                        <div style={{ fontSize: 12 }} className="text-blue-500 hover:underline focus:outline-none ml-2" onClick={() => toggleTruncate(-1)}>
-                          Showless
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        {todo.title.slice(0, 35)}
-                        {todo.title.length > 35 && (
-                          <div style={{ fontSize: 12 }} className="text-red-500 hover:underline focus:outline-none ml-2" onClick={() => toggleTruncate(index)}>
-                            Readmore....
+        <div>
+
+          <h3 className="text-center text-5xl text-white font-extrabold mb-5">TODOS</h3>
+          <h3 className="text-center subpixel-antialiased underline text-white text-1xl font-extrabold mb-5 cursor-pointer" onClick={handleGetTodo}>
+            Reload
+          </h3>
+
+          <div className="flex my-3 justify-center">{loading ? <Image width={50} src={loader} alt="loader" /> : null}</div>
+
+          {todos?.length > 0 ? (
+
+            <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 justify-center">
+
+              {todos.map((todo, index) => (
+
+                <div key={index} className="max-w-sm bg-white rounded-lg overflow-hidden shadow-lg">
+                  <div className="px-6 py-4">
+                    <div className="font-bold text-xl mb-2 cursor-pointer">
+
+                      {expandedtitle === index ? (
+                        <div className='text-justify'>
+                          {todo.title}
+                          <div style={{ fontSize: 12 }} className={readlessclass} onClick={() => toggleTruncateTitle(-1)}>
+                            Showless
                           </div>
-                        )}
+                        </div>
+                      ) : (
+                        <div className='text-justify'>
+                          {todo.title.slice(0, 35)}
+                          {todo.title.length > 35 && (
+                            <div style={{ fontSize: 12 }} className={readmoreclass} onClick={() => toggleTruncateTitle(index)}>
+                              Readmore....
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className=" mb-2 cursor-pointer">
+
+                      {truncdesc === index ? (
+                        <div className='text-justify'>
+                          {todo.description}
+                          <div style={{ fontSize: 12 }} className={readlessclass} onClick={() => toggleTruncateDescription(-1)}>
+                            Showless
+                          </div>
+                        </div>
+                      ) : (
+                        <div className='text-justify'>
+                          {todo.description.slice(0, 77)}
+                          {todo.description.length > 77 && (
+                            <div style={{ fontSize: 12 }} className={readmoreclass} onClick={() => toggleTruncateDescription(index)}>
+                              Readmore....
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+
+                  <div className="px-6 pt-4 pb-2 flex justify-between items-center text-xs">
+
+                    <span className="inline-block cursor-pointer bg-gray-200 rounded-full px-3 py-1 font-semibold text-gray-700">
+                      Created at: {formatDate(todo.updatedat)}
+                    </span>
+
+                    <div className="flex">
+                      <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => deleteTodo(todo._id)}>
+                        <FontAwesomeIcon className="cursor-pointer" icon={faTrashAlt} />
                       </div>
-                    )}
-                  </div>
-                  <p className="text-gray-700 text-base cursor-pointer">{todo.description}</p>
-                </div>
-                <div className="px-6 pt-4 pb-2 flex justify-between items-center text-xs">
-                  <span className="inline-block cursor-pointer bg-gray-200 rounded-full px-3 py-1 font-semibold text-gray-700">
-                    Created at: {formatDate(todo.updatedat)}
-                  </span>
-                  <div className="flex">
-                    <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => deleteTodo(todo._id)}>
-                      <FontAwesomeIcon className="cursor-pointer" icon={faTrashAlt} />
+                      <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => updateTodo(index, todo._id, todo.title, todo.description)}>
+                        <FontAwesomeIcon className="cursor-pointer" icon={faEdit} />
+                      </div>
                     </div>
-                    <div className="bg-gray-200 p-1 px-2 rounded-full ml-1" onClick={() => updateTodo(index, todo._id, todo.title, todo.description)}>
-                      <FontAwesomeIcon className="cursor-pointer" icon={faEdit} />
-                    </div>
+
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <h3 className="text-center text-4xl text-zinc-200 font-extrabold mb-5">NO TODOS AVAILABLE</h3>
-        )}
+
+              ))}
+
+            </div>
+          ) : (
+            <h3 className="text-center text-4xl text-zinc-200 font-extrabold mb-5">NO TODOS AVAILABLE</h3>
+          )}
+        </div>
       </div>
     </>
   );

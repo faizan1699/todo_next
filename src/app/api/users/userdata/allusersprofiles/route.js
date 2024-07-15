@@ -38,16 +38,49 @@ export async function POST(req) {
   }
 }
 
+export async function DELETE(req) {
+  try {
+    const reqbody = await req.json();
+    const { id } = reqbody;
+
+    const user = await User.findById(id);
+  
+    if (!user) {
+      return NextResponse.json({ message: "user not found" });
+    }
+
+    const deleteuser = await User.findByIdAndDelete(id);
+
+    if (!deleteuser) {
+      return NextResponse.json({ message: "user not delete" });
+    }
+
+    const response = NextResponse.json(
+      {
+        message: "user deleted successfully",
+        success: true,
+      },
+      { status: 200 }
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
 export async function PUT(req) {
   try {
     const reqbody = await req.json();
-    const { id, email, username, emailverify, isAdmin, updatedby } = reqbody;
+    const { id, email, username, isemailverified, isAdmin, updatedby } =
+      reqbody;
 
     console.log(id);
     console.log(email);
     console.log(updatedby);
 
     const isuser = await User.findById({ _id: id });
+    const user = await User.findById({ _id: id });
 
     if (!isuser) {
       return NextResponse.json({
@@ -65,14 +98,12 @@ export async function PUT(req) {
       );
     }
 
-    const user = await User.findById({ _id: id });
-
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const currentDateTime = DateTime.now().setZone(userTimezone);
 
     user.email = email;
     user.username = username;
-    user.isemailverified = emailverify;
+    user.isemailverified = isemailverified;
     user.isAdmin = isAdmin;
     user.userUpdatedby = updatedby;
     user.userUpdatedOn = currentDateTime.toJSDate();
@@ -84,7 +115,7 @@ export async function PUT(req) {
       email,
       isAdmin: isAdmin,
       username,
-      isemailverified: emailverify,
+      isemailverified: isemailverified,
       userUpdatedOn: currentDateTime.toJSDate(),
       userUpdatedby: updatedby,
     };

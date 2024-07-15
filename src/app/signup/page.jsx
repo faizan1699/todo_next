@@ -1,16 +1,16 @@
 
 "use client";
-
 import React, { useState } from 'react';
+
 import axios from 'axios';
 import Link from 'next/link';
+import Image from 'next/image';
+import Loader from '../assets/loader/loader.gif';
 
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
-import Loader from '../assets/loader/loader.gif';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
 const Signup = () => {
 
@@ -18,8 +18,6 @@ const Signup = () => {
   const errClass = "text-red-600 text-xs text-end";
   const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
 
-
-  const [msg, setMsg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [passtype, setPassType] = useState('password');
   const [input, setInput] = useState({
@@ -47,25 +45,14 @@ const Signup = () => {
     setPassType(passtype === 'text' ? 'password' : 'text');
   };
 
-  function hideMsg() {
-    return setTimeout(() => {
-      setMsg(null);
-    }, 10000)
-  }
-
   const handleRegister = async (e) => {
     e.preventDefault();
     const { username, email, password } = input;
     let validform = true;
 
-    const newErrors = {
-      username: !username,
-      email: !email,
-      password: !password
-    }
 
     if (!username || !email || !password) {
-      setErr(newErrors)
+      toast.error("pls provide required data")
       validform = false;
     }
 
@@ -75,36 +62,30 @@ const Signup = () => {
 
       try {
         const response = await axios.post('/api/users/auth/register', input);
-        setMsg(response?.data?.message);
+        toast.success(response?.data?.message);
         setLoading(false);
-        hideMsg();
         setInput({
           username: '',
           email: '',
           password: ''
         });
-
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+        router.push("/login");
 
       } catch (error) {
         setLoading(false);
-        hideMsg();
+          toast.error(error?.response?.data?.message)
       }
     }
   };
 
   return (
-
-
     <>
 
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
 
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up to your account</h2>
-          {msg && <p className="mt-1 text-center font-bold text-red-500">{msg}</p>}
+         
         </div>
 
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -113,7 +94,7 @@ const Signup = () => {
             <div>
               <label htmlFor="email" className={labelClasses}>User name</label>
               <div className="mt-1">
-                <input name="username" type="text" value={input.username} onChange={handleInputChange} autoComplete="email" className="px-1 block w-full rounded-md border-0 py-2 text-red-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6" placeholder='username' />
+                <input name="username" type="text" value={input.username} onChange={handleInputChange} autoComplete="new-username" className="px-1 block w-full rounded-md border-0 py-2 text-red-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6" placeholder='username' />
                 {err.username && <p className={errClass}>username required</p>}
               </div>
             </div>
@@ -121,7 +102,7 @@ const Signup = () => {
             <div>
               <label htmlFor="email" className={labelClasses}>Email address</label>
               <div className="mt-1">
-                <input name="email" type="email" value={input.email} onChange={handleInputChange} autoComplete="email" className="px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6" placeholder='email' />
+                <input name="email" type="email" value={input.email} onChange={handleInputChange} autoComplete="new-email" className="px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6" placeholder='email' />
                 {err.email && <p className={errClass}>email required</p>}
               </div>
             </div>

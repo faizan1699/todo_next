@@ -2,11 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-
 input:focus {
   outline: none !important;
 }
 
+input:focus {
+  background-color: #ffff !important;
+}
+
+@media screen and (max-width: 500px) {
+  .updatetodoDivempty {
+    display: none !important;
+  }
+}
 @media screen and (max-width: 640px) {
   .nav_logo {
     display: flex;

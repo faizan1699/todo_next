@@ -1,8 +1,9 @@
 "use client";
 
-import axios from "axios";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
+import axios from "axios";
 import loader from "@/app/assets/loader/loader.gif"
 import Todo from "../todos/page";
 import Image from "next/image";
@@ -10,8 +11,8 @@ import Image from "next/image";
 const CreateTodo = () => {
 
   const maxLength = 1050;
-  const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
-  const [msg, setMsg] = useState(null);
+  const labelClasses = "block text-sm font-medium leading-6 text-white";
+
   const [loading, setLoading] = useState(false);
   const [todosUpdated, setTodosUpdated] = useState(false);
   const [edit, setEdit] = useState(true);
@@ -39,7 +40,7 @@ const CreateTodo = () => {
         [name]: value
       });
     }
-    setMsg(null);
+
   };
 
 
@@ -54,7 +55,7 @@ const CreateTodo = () => {
       const email = y.email;
       try {
         const response = await axios.post("/api/users/userdata/createtodo", { ...input, email: email });
-        setMsg(response?.data?.message);
+        toast.success(response?.data?.message);
         setLoading(false);
         setInput({
           title: "",
@@ -63,25 +64,22 @@ const CreateTodo = () => {
         setTodosUpdated(true);
       }
       catch (error) {
-        setMsg(error?.response?.data?.message);
+        toast.error(error?.response?.data?.message);
         setLoading(false);
       }
     }
-    setTimeout(() => {
-      setMsg(null);
-    }, 5000);
+
   };
 
   return (
 
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      {edit && <div className=" bg-gray-600 rounded-lg mb-3 py-3  px-2">
+    <div className="flex min-h-full flex-1 justify-center flex-col md:px-6 px-1 py-12 lg:px-8">
+      {edit && <div className="bg-gray-800 rounded-lg mb-3 py-10  px-2">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {msg && <p className="mt-1 text-center font-bold text-red-500">{msg}</p>}
-        </div>
+          <p className="mt-1 text-gray-400 text-extrabold text-3xl text-center font-bold">CREATE TODO</p>
+              </div>
 
-        <p className="mt-1 text-gray-400 text-extrabold text-3xl text-center font-bold">CREATE TODO</p>
-        <div className="mt-10  rounded-lg sm:mx-auto md:w-9/12 w-full">
+        <div className="mt-5  rounded-lg sm:mx-auto md:w-9/12 w-full">
           <form method="POST" onSubmit={handleSavetodo} className="space-y-3">
             <div>
               <label htmlFor="title" className={labelClasses}>
@@ -93,7 +91,7 @@ const CreateTodo = () => {
                   type="text"
                   value={input.title}
                   onChange={handleInputChange}
-                  className="px-2  w-full rounded-md border-0 py-3 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                  className="px-2 w-full rounded-md border-0 py-3 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                   placeholder="Enter title here"
                 />
               </div>

@@ -6,6 +6,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import Loader from '../assets/loader/loader.gif';
 
+import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
@@ -14,10 +15,8 @@ import Image from 'next/image';
 const Login = () => {
 
     const router = useRouter();
-    const errClass = "text-red-600 text-xs text-end";
-    const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
 
-    const [msg, setMsg] = useState(null);
+    const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
     const [loading, setLoading] = useState(false);
     const [passtype, setPassType] = useState('password');
     const [input, setInput] = useState({
@@ -49,12 +48,9 @@ const Login = () => {
         const { email, password } = input;
 
         let validform = true;
-        const newErrors = {
-            email: !email,
-            password: !password
-        }
+
         if (!email || !password) {
-            setErr(newErrors)
+            toast.error("email or password missing");
             validform = false;
         }
         if (validform) {
@@ -62,14 +58,11 @@ const Login = () => {
 
             try {
                 const response = await axios.post('/api/users/auth/login', input);
-                
-                setMsg(response?.data?.message);
-                console.log(response)
+
+                toast.success(response?.data?.message);
                 const userobject = response?.data?.userdata;
                 const data = JSON.stringify(userobject)
-         
                 localStorage.setItem("userToken", data);
-                
                 setLoading(false);
                 setTimeout(() => {
                     router.push('/');
@@ -77,8 +70,7 @@ const Login = () => {
 
             } catch (error) {
                 setLoading(false);
-                setMsg(error.response.data.message)
-                console.log("eror", error)
+                toast.error(error.response.data.message);
             }
         }
     };
@@ -86,11 +78,10 @@ const Login = () => {
     return (
         <>
 
-            <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+            <div className="flex min-h-full flex-1 flex-col justify-center w-full px-6 py-12 lg:px-8">
 
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Log in to your account</h2>
-                    {msg && <p className="mt-1 text-center font-bold text-red-500">{msg}</p>}
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -107,7 +98,6 @@ const Login = () => {
                                     className="px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                                     placeholder='email'
                                 />
-                                {err.email && <p className={errClass}>email required</p>}
                             </div>
                         </div>
 
@@ -128,12 +118,13 @@ const Login = () => {
                                     onChange={handleInputChange}
                                     className="px-1 block w-full rounded-md py-2 text-red-900 shadow-sm placeholder:text-gray-300  sm:text-sm sm:leading-6"
                                     placeholder='password'
+                                    autoComplete='curret-password'
                                 />
                                 <div className="flex items-center justify-center" onClick={handleShowpassword}>
                                     <FontAwesomeIcon className='px-1' icon={passtype === "password" ? faEye : faEyeSlash} />
                                 </div>
                             </div>
-                            {err.password && <p className={errClass}>password required</p>}
+
                         </div>
 
                         <div>

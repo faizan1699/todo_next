@@ -73,7 +73,7 @@ export async function DELETE(req) {
       decodedToken = jwt.verify(tokenvalue, process.env.JWT_SECRET);
     } catch (error) {
       console.log(error.message);
-      return NextResponse.json({ message: "token not found" }, { status: 401 });
+      return NextResponse.json({ message: error.message }, { status: 401 });
     }
 
     const email = decodedToken.email;

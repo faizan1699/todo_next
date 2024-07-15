@@ -28,7 +28,8 @@
     "nodemailer": "^6.9.14",
     "nookies": "^2.5.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "eslint": "^8",
