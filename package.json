@@ -25,6 +25,7 @@
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.0",
     "next": "14.2.4",
+    "next-auth": "^4.24.7",
     "nodemailer": "^6.9.14",
     "nookies": "^2.5.2",
     "react": "^18",

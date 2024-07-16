@@ -79,10 +79,12 @@ const Navbar = () => {
     // Update navmap based on isAdmin state
     useEffect(() => {
         if (isadmin) {
+        
             if (isadmin === true) {
                 setNavmap(adminnav);
                 setUserStatus("Admin");
-            } else if (isadmin === false) {
+            }
+            if (isadmin === false) {
                 setNavmap(usernav);
                 setUserStatus("User");
             }
