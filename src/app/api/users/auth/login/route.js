@@ -9,6 +9,16 @@ connect();
 
 export async function POST(req) {
   try {
+
+
+    // verify jwt token is available
+
+    const jwtToken = req.cookies.get("token");
+    if(jwtToken) {
+      return NextResponse.json({message: "user already logged in"} , {status: 20})
+    }
+
+
     const reqBody = await req.json();
     const { email, password } = reqBody;
 
@@ -42,7 +52,6 @@ export async function POST(req) {
       userId: user._id,
       username: user.username,
       email: user.email,
-      admin: user.isAdmin,
     };
 
     const response = NextResponse.json({

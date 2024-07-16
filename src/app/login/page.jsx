@@ -1,20 +1,23 @@
 
 "use client";
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Loader from '../assets/loader/loader.gif';
+import Image from 'next/image';
 
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { NavbarHitFunction } from '../components/rootcomponent/page';
+
 
 const Login = () => {
 
     const router = useRouter();
+    const setNavFunc = useContext(NavbarHitFunction);
 
     const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
     const [loading, setLoading] = useState(false);
@@ -64,13 +67,11 @@ const Login = () => {
                 const data = JSON.stringify(userobject)
                 localStorage.setItem("userToken", data);
                 setLoading(false);
-                setTimeout(() => {
-                    router.push('/');
-                }, 2000);
-
+                router.push('/');
+                setNavFunc(true);
             } catch (error) {
                 setLoading(false);
-                toast.error(error.response.data.message);
+                toast.error(error?.response?.data?.message);
             }
         }
     };

@@ -1,14 +1,17 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { navfunc } from '../rootcomponent/page';
+
 import logo from '../../assets/logo/logo.png';
 import Image from 'next/image';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 
 const authnav = [
     { name: 'Login', href: '/login' },
@@ -29,26 +32,34 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const Navbar = ({ refreshUser, setNavDisplay }) => {
+const Navbar = () => {
+
     const router = useRouter();
+    const islogin = useContext(navfunc);
+
     const [userinfo, setUserInfo] = useState({});
     const [activelink, setActiveLink] = useState("");
     const [navmap, setNavmap] = useState(authnav);
     const [isadmin, setIsAdmin] = useState(null);
-    const [isuser, setIsuser] = useState(false);
+    const [userstatus, setUserStatus] = useState("null");
 
     const userdata = localStorage.getItem("userToken");
-    useEffect(() => {
-        const data = JSON.parse(userdata);
+
+    const getUserData = () => {
         if (userdata) {
-            return () => {
-                setUserInfo(data);
-            }
+            const data = JSON.parse(userdata);
+            setUserInfo(data);
         }
-    }, [])
+    };
 
     useEffect(() => {
-        if (userinfo.email) {
+        if (islogin === true) {
+            getUserData();
+        }
+    }, [islogin]);
+
+    useEffect(() => {
+        if (userinfo && userinfo.email) {
             const email = userinfo.email;
             getUsertype(email);
         }
@@ -59,23 +70,28 @@ const Navbar = ({ refreshUser, setNavDisplay }) => {
         try {
             const response = await axios.post("/api/profile/usertype", { email });
             setIsAdmin(response?.data?.isAdmin);
-            setIsuser(true);
+
         } catch (error) {
             console.log("Error fetching user type:", error.message);
-            setIsAdmin(false); // Set isAdmin to false or handle error case
         }
     };
 
     // Update navmap based on isAdmin state
     useEffect(() => {
-        if (isadmin === true) {
-            setNavmap(adminnav);
-        } else if (isadmin === false) {
-            setNavmap(usernav);
-        } else {
-            setNavmap(authnav);
+        if (isadmin) {
+            if (isadmin === true) {
+                setNavmap(adminnav);
+                setUserStatus("Admin");
+            } else if (isadmin === false) {
+                setNavmap(usernav);
+                setUserStatus("User");
+            }
         }
     }, [isadmin]);
+
+    useEffect(() => {
+        getUserData();
+    }, [userdata])
 
     // Function to handle active link in navigation
     const handleActiveLink = (href) => {
@@ -84,22 +100,22 @@ const Navbar = ({ refreshUser, setNavDisplay }) => {
 
     // Function to handle logout
     const handleLogout = async () => {
+        localStorage.removeItem("userToken");
         try {
             const response = await axios.get("/api/users/auth/logout");
-            localStorage.removeItem("userToken");
-            alert(response?.data?.message);
-            router.push("/login");
+            toast.success(response?.data?.message);
             setUserInfo({});
             setIsAdmin(null);
             setNavmap(authnav);
+            router.push("/login");
         } catch (error) {
-            console.log("Logout error:", error.message);
+            toast.error(error?.response?.data?.message);
         }
     }
 
     return (
         <>
-            <Disclosure as="nav" className="bg-gray-800" style={{ display: setNavDisplay }}>
+            <Disclosure as="nav" className="bg-gray-800">
                 <div className="mx-auto px-2 sm:px-6 lg:px-8">
                     <div className="relative flex h-16 items-center justify-between">
                         <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -160,7 +176,7 @@ const Navbar = ({ refreshUser, setNavDisplay }) => {
                                     {userinfo &&
                                         <div className="flex text-white flex-col items-center justify-center pl-2">
                                             <div className="text-start">{userinfo.username}</div>
-                                            <div className="text-start text-green-500 underline" style={{ fontSize: 12 }}>{isadmin === true ? "Admin" : "User"}</div>
+                                            <div className="text-start text-green-500 underline" style={{ fontSize: 12 }}>{userstatus}</div>
                                         </div>}
                                 </div>
                                 <MenuItems

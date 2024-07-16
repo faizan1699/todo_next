@@ -10,6 +10,16 @@ input:focus {
   background-color: #ffff !important;
 }
 
+.loading_page {
+  background-color: rgba(105, 105, 105, 0.541) !important;
+  height: 89vh !important;
+  width: 100% !important;
+  position: absolute !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media screen and (max-width: 500px) {
   .updatetodoDivempty {
     display: none !important;
