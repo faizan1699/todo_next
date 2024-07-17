@@ -25,6 +25,13 @@ const userSchema = mongoose.Schema({
   otp: {
     type: Number,
   },
+  isuserblock: {
+    type: Boolean,
+    default: false,
+  },
+  blockon: {
+    type: Date,
+  },
   userUpdatedby: {
     type: String,
   },
@@ -37,7 +44,6 @@ const userSchema = mongoose.Schema({
 
   verifyemailtoken: String,
   verifyemailtokenexpiry: { type: Date },
-
 });
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);

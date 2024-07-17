@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { NavbarHitFunction } from '../components/rootcomponent/page';
+import { useEffect } from 'react';
 
 
 const Login = () => {

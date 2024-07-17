@@ -33,7 +33,6 @@ export async function POST(req) {
     );
     return response;
   } catch (error) {
-    console.log(error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
@@ -75,14 +74,9 @@ export async function PUT(req) {
     const { id, email, username, isemailverified, isAdmin, updatedby } =
       reqbody;
 
-    console.log(id);
-    console.log(email);
-    console.log(updatedby);
-
-    const isuser = await User.findById({ _id: id });
     const user = await User.findById({ _id: id });
 
-    if (!isuser) {
+    if (!user) {
       return NextResponse.json({
         message: "user not found",
       });

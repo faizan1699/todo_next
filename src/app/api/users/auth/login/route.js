@@ -18,7 +18,6 @@ export async function POST(req) {
       return NextResponse.json({message: "user already logged in"} , {status: 20})
     }
 
-
     const reqBody = await req.json();
     const { email, password } = reqBody;
 
