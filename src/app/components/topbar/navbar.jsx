@@ -41,7 +41,7 @@ const Navbar = () => {
     const [activelink, setActiveLink] = useState("");
     const [navmap, setNavmap] = useState(authnav);
     const [isadmin, setIsAdmin] = useState(null);
-    const [userstatus, setUserStatus] = useState("null");
+    const [userstatus, setUserStatus] = useState(null);
 
     const userdata = localStorage.getItem("userToken");
 
@@ -70,7 +70,6 @@ const Navbar = () => {
         try {
             const response = await axios.post("/api/profile/usertype", { email });
             setIsAdmin(response?.data?.isAdmin);
-
         } catch (error) {
             console.log("Error fetching user type:", error.message);
         }
@@ -78,24 +77,20 @@ const Navbar = () => {
 
     // Update navmap based on isAdmin state
     useEffect(() => {
-        if (isadmin) {
-        
-            if (isadmin === true) {
-                setNavmap(adminnav);
-                setUserStatus("Admin");
-            }
-            if (isadmin === false) {
-                setNavmap(usernav);
-                setUserStatus("User");
-            }
+        if (isadmin === true) {
+            setNavmap(adminnav);
+            setUserStatus("Admin");
+        }
+        if (isadmin === false) {
+            setNavmap(usernav);
+            setUserStatus("User");
         }
     }, [isadmin]);
 
     useEffect(() => {
         getUserData();
-    }, [userdata])
+    }, [userdata]);
 
-    // Function to handle active link in navigation
     const handleActiveLink = (href) => {
         setActiveLink(href);
     }
