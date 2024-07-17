@@ -14,7 +14,8 @@ export async function POST(req) {
     const jwtToken = token && typeof token === "object" ? token.value : token;
 
     const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
-    const currentTime = Math.floor(Date.now() / 100000);
+
+    const currentTime = Math.floor(Date.now() / 1000);
 
     if (jwtToken) {
       if (decoded.exp && currentTime <= decoded.exp) {
@@ -38,6 +39,6 @@ export async function POST(req) {
     return response;
   } catch (error) {
     console.error("Login error:", error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    return NextResponse.json({ message: error?.message }, { status: 500 });
   }
 }

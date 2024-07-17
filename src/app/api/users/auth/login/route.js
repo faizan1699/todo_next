@@ -9,13 +9,11 @@ connect();
 
 export async function POST(req) {
   try {
-
-
     // verify jwt token is available
 
     const jwtToken = req.cookies.get("token");
-    if(jwtToken) {
-      return NextResponse.json({message: "user already logged in"} , {status: 20})
+    if (jwtToken) {
+      return NextResponse.json({ message: "user already logged in" });
     }
 
     const reqBody = await req.json();
@@ -23,8 +21,23 @@ export async function POST(req) {
 
     const user = await User.findOne({ email });
 
+    if (user.isuserblock) {
+      return NextResponse.json(
+        { message: "you are blocked by admin" },
+        { status: 403 }
+      );
+    }
+
     if (!user) {
       return NextResponse.json({ message: "user not found" }, { status: 404 });
+    }
+
+    const isVerified = await user.isemailverified;
+    if (isVerified === false) {
+      return NextResponse.json(
+        { message: "Email not verify , pls verify email first" },
+        { status: 401 }
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -43,8 +56,8 @@ export async function POST(req) {
       admin: user.isAdmin,
     };
 
-    const token = await jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "10d",
+    const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
+      expiresIn: "30d",
     });
 
     const userdata = {
@@ -60,7 +73,7 @@ export async function POST(req) {
       token,
     });
 
-    await response.cookies.set("token", token, {
+    response.cookies.set("token", token, {
       httpOnly: true,
       maxAge: 10 * 24 * 60 * 60,
     });
