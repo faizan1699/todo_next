@@ -58,7 +58,7 @@ const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
       setTodosUpdated(false);
     }, 1500);
 
-  }, [refreshTodos]);
+  }, [refreshTodos ]);
 
   const handleGetTodo = async () => {
     setLoading(true);

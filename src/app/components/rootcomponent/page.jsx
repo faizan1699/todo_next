@@ -18,7 +18,7 @@ export const setLoadingPage = createContext(null);
 export const setUserTypeContext = createContext(null);
 export const sendusertype = createContext(null);
 
-const page = ({ children }) => {
+const RootComponent = ({ children }) => {
 
   const [func, setFunc] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -80,4 +80,4 @@ const page = ({ children }) => {
   )
 }
 
-export default page
+export default RootComponent
