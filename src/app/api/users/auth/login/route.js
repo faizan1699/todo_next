@@ -10,26 +10,19 @@ connect();
 export async function POST(req) {
   try {
     // verify jwt token is available
-
-    const jwtToken = req.cookies.get("token");
-    if (jwtToken) {
-      return NextResponse.json({ message: "user already logged in" });
-    }
-
     const reqBody = await req.json();
     const { email, password } = reqBody;
-
     const user = await User.findOne({ email });
-
-    if (user.isuserblock) {
-      return NextResponse.json(
-        { message: "you are blocked by admin" },
-        { status: 403 }
-      );
-    }
 
     if (!user) {
       return NextResponse.json({ message: "user not found" }, { status: 404 });
+    }
+
+    if (user.isuserblock) {
+      return NextResponse.json(
+        { message: "your account is blocked" },
+        { status: 403 }
+      );
     }
 
     const isVerified = await user.isemailverified;
@@ -54,6 +47,7 @@ export async function POST(req) {
       username: user.username,
       email: user.email,
       admin: user.isAdmin,
+      superAdmin: false,
     };
 
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {

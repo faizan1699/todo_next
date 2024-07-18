@@ -3,6 +3,7 @@ import connect from "@/app/dbconfig/dbconfig";
 import { NextResponse } from "next/server";
 import TodoModel from "@/app/models/todomodel";
 import { DateTime } from "luxon";
+import { countMessageWord } from "@/app/utils/countwords/countwords";
 
 export async function POST(req) {
   await connect();
@@ -14,6 +15,22 @@ export async function POST(req) {
 
     if (!user) {
       return NextResponse.json({ message: "user not found" });
+    }
+
+    const countTitle = countMessageWord(title);
+    const countdescription = countMessageWord(description);
+
+    if (countTitle < 4) {
+      return NextResponse.json(
+        { message: "title must be 4 chracter" },
+        { status: 422 }
+      );
+    }
+    if (countdescription < 10) {
+      return NextResponse.json(
+        { message: "description must be 10 words" },
+        { status: 422 }
+      );
     }
 
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -64,6 +81,22 @@ export async function PUT(req) {
 
     if (!todo) {
       return NextResponse.json({ message: "Todo not found" }, { status: 404 });
+    }
+
+    const countTitle = countMessageWord(title);
+    const countdescription = countMessageWord(description);
+
+    if (countTitle < 4) {
+      return NextResponse.json(
+        { message: "title must be 4 chracter" },
+        { status: 422 }
+      );
+    }
+    if (countdescription < 10) {
+      return NextResponse.json(
+        { message: "description must be 10 words" },
+        { status: 422 }
+      );
     }
 
     // Update todo fields

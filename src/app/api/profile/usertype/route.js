@@ -20,8 +20,9 @@ export async function POST(req) {
     }
 
     const isAdmin = user.isAdmin;
+    const superAdmin = user.isSuperAdmin;
 
-    return NextResponse.json({ isAdmin });
+    return NextResponse.json({ isAdmin, superAdmin });
   } catch (error) {
     console.error("Error fetching user:", error);
     return NextResponse.json({ message: error.message }, { status: 500 });

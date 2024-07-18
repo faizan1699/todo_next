@@ -2,6 +2,9 @@ import connect from "@/app/dbconfig/dbconfig";
 import User from "@/app/models/usermodel";
 import { NextResponse } from "next/server";
 import { DateTime } from "luxon";
+import jwt from "jsonwebtoken";
+
+import { getUserToken } from "@/app/utils/jwt/token";
 
 connect();
 
@@ -13,7 +16,7 @@ export async function POST(req) {
     if (!user) {
       return NextResponse.json({ message: "user not found" });
     }
-    const isAdmin = await user.isAdmin;
+    const isAdmin = (await user.isAdmin) || user.isSuperAdmin;
     if (!isAdmin) {
       return NextResponse.json({
         message: "user not authencated for this page",
@@ -43,9 +46,18 @@ export async function DELETE(req) {
     const { id } = reqbody;
 
     const user = await User.findById(id);
-  
+
     if (!user) {
       return NextResponse.json({ message: "user not found" });
+    }
+
+    const superAdmin = await user.isSuperAdmin;
+
+    if (superAdmin) {
+      return NextResponse.json(
+        { message: "not have permission to delete super admin" },
+        { status: 403 }
+      );
     }
 
     const deleteuser = await User.findByIdAndDelete(id);
@@ -70,9 +82,23 @@ export async function DELETE(req) {
 
 export async function PUT(req) {
   try {
+    const token = await getUserToken(req);
+
     const reqbody = await req.json();
-    const { id, email, username, isemailverified, isAdmin, updatedby } =
-      reqbody;
+    const {
+      id,
+      email,
+      username,
+      isemailverified,
+      isAdmin,
+      updatedby,
+      isSuperAdmin,
+    } = reqbody;
+
+    const editeremail = token.email;
+    const editer = await User.findOne({ email: editeremail });
+
+    const idEditersuperAdmin = await editer.isSuperAdmin;
 
     const user = await User.findById({ _id: id });
 
@@ -80,6 +106,16 @@ export async function PUT(req) {
       return NextResponse.json({
         message: "user not found",
       });
+    }
+
+    if (!idEditersuperAdmin) {
+      const superAdmin = await user.isSuperAdmin;
+      if (superAdmin) {
+        return NextResponse.json(
+          { message: "not have permission to edit super admin" },
+          { status: 403 }
+        );
+      }
     }
 
     const Admin = await User.findOne({ email: updatedby });
@@ -101,7 +137,7 @@ export async function PUT(req) {
     user.isAdmin = isAdmin;
     user.userUpdatedby = updatedby;
     user.userUpdatedOn = currentDateTime.toJSDate();
-
+    user.isSuperAdmin = isSuperAdmin;
     await user.save();
 
     const usersdata = {

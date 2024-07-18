@@ -18,6 +18,10 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isSuperAdmin: {
+    type: Boolean,
+    default: false,
+  },
   isemailverified: {
     type: Boolean,
     default: false,

@@ -60,7 +60,7 @@ const ChangePassword = () => {
             const response = await axios.put('/api/users/auth/password/change', input);
             toast.success(response?.data?.message);
             setLoading(false);
-            // router.push('/');
+            router.back();
             console.log(response);
         } catch (error) {
             setLoading(false);

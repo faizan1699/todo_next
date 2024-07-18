@@ -25,7 +25,7 @@ export async function PUT(req) {
 
     const response = NextResponse.json(
       {
-        message: "user blocked successfully",
+        message: "user unblocked successfully",
         success: true,
       },
       { status: 200 }

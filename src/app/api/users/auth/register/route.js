@@ -15,7 +15,10 @@ export async function POST(req) {
     const userfind = await User.findOne({ email });
 
     if (userfind) {
-      return NextResponse.json({ message: "User already exist" });
+      return NextResponse.json(
+        { message: "User already exist" },
+        { status: 403 }
+      );
     }
 
     const salt = await bcryptjs.genSalt(10);

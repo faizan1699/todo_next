@@ -8,6 +8,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { navfunc } from '../rootcomponent/page';
+import { setUserTypeContext } from '../rootcomponent/page';
 
 import logo from '../../assets/logo/logo.png';
 import Image from 'next/image';
@@ -27,7 +28,7 @@ const usernav = [
 
 const adminnav = [
     ...usernav,
-    { name: 'Users', href: '/users' },
+    { name: 'Users', href: '/admin/users' },
 ];
 
 function classNames(...classes) {
@@ -38,11 +39,13 @@ const Navbar = () => {
 
     const router = useRouter();
     const islogin = useContext(navfunc);
+    const setUserType = useContext(setUserTypeContext);
 
     const [userinfo, setUserInfo] = useState({});
     const [activelink, setActiveLink] = useState("");
     const [navmap, setNavmap] = useState(authnav);
     const [isadmin, setIsAdmin] = useState(null);
+    const [superAdmin, setSuperAdmin] = useState(null);
     const [userstatus, setUserStatus] = useState(null);
 
     const userdata = localStorage.getItem("userToken");
@@ -72,6 +75,7 @@ const Navbar = () => {
         try {
             const response = await axios.post("/api/profile/usertype", { email });
             setIsAdmin(response?.data?.isAdmin);
+            setSuperAdmin(response?.data?.superAdmin);
         } catch (error) {
             console.log("Error fetching user type:", error.message);
         }
@@ -79,15 +83,22 @@ const Navbar = () => {
 
     // Update navmap based on isAdmin state
     useEffect(() => {
-        if (isadmin === true) {
+        if (superAdmin === true) {
+            setNavmap(adminnav);
+            setUserStatus("Super Admin");
+            setUserType("superadmin");
+        }
+        else if (isadmin === true) {
             setNavmap(adminnav);
             setUserStatus("Admin");
+            setUserType("admin");
         }
-        if (isadmin === false) {
+        else if (isadmin === false) {
             setNavmap(usernav);
             setUserStatus("User");
-        }
-    }, [isadmin]);
+            setUserType("user");
+        } else { return }
+    }, [isadmin, superAdmin]);
 
     useEffect(() => {
         getUserData();
@@ -95,6 +106,10 @@ const Navbar = () => {
 
     const handleActiveLink = (href) => {
         setActiveLink(href);
+    }
+
+    const backTopreviousPage = () => {
+        router.back();
     }
 
     // Function to handle logout
@@ -106,10 +121,10 @@ const Navbar = () => {
             setUserInfo({});
             setIsAdmin(null);
             setNavmap(authnav);
-            router.push("/login");
         } catch (error) {
             toast.error(error?.response?.data?.message);
         }
+        router.push("/login");
     }
 
     return (
@@ -128,15 +143,13 @@ const Navbar = () => {
                         </div>
 
                         <div className="flex items-center w-full nav_logo">
-                            <Link href={isadmin === true || isadmin === false ? "/" : ""}>
-                                <Image
-                                    alt="TODO APP"
-                                    src={logo}
-                                    width={120}
-                                    priority
-                                    onClick={getUsertype}
-                                />
-                            </Link>
+                            <Image
+                                alt="TODO APP"
+                                src={logo}
+                                width={120}
+                                priority
+                                onClick={backTopreviousPage}
+                            />
                         </div>
 
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
@@ -174,8 +187,8 @@ const Navbar = () => {
                                     </MenuButton>
                                     {userinfo &&
                                         <div className="flex text-white flex-col items-center justify-center pl-2">
-                                            <div className="text-start">{userinfo.username}</div>
-                                            <div className="text-start text-green-500 underline" style={{ fontSize: 12 }}>{userstatus}</div>
+                                            <div className="text-start text-nowrap">{userinfo.username.length < 8 ? userinfo.username : userinfo.username.slice(0, 8) + " " + "..."}</div>
+                                            <div className="text-start text-green-500 underline text-nowrap" style={{ fontSize: 12 }}>{userstatus}</div>
                                         </div>}
                                 </div>
                                 <MenuItems

@@ -63,6 +63,7 @@ const Login = () => {
 
             try {
                 const response = await axios.post('/api/users/auth/login', input);
+                console.log(response)
                 toast.success(response?.data?.message);
                 const userobject = response?.data?.userdata;
                 const data = JSON.stringify(userobject)
@@ -72,6 +73,7 @@ const Login = () => {
                 router.push('/');
             } catch (error) {
                 setLoading(false);
+                console.log(error)
                 toast.error(error?.response?.data?.message);
             }
         }

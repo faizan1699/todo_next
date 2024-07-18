@@ -14,7 +14,6 @@ export async function PUT(req) {
       return NextResponse.json({ message: "token not found" }, { status: 401 });
     }
 
-
     const currentTime = Math.floor(Date.now() / 1000);
     let decoded;
 
@@ -27,8 +26,8 @@ export async function PUT(req) {
       );
     }
 
-    if(decoded.exp && decoded.exp <= currentTime) {
-      return NextResponse.json({message: "session expired"} , {status : 401})
+    if (decoded.exp && decoded.exp <= currentTime) {
+      return NextResponse.json({ message: "session expired" }, { status: 401 });
     }
 
     const useremail = decoded.email;
@@ -38,10 +37,24 @@ export async function PUT(req) {
 
     const user = await User.findOne({ email: useremail });
 
+    if (newpassword === password) {
+      return NextResponse.json(
+        { message: "pls use different password from old password" },
+        { status: 422 }
+      );
+    }
+
+    if (newpassword.length < 8) {
+      return NextResponse.json({ message: "pasword must be 8 chracters" }  , {status: 422});
+    }
+
     if (!user) {
-      return NextResponse.json({
-        message: "user not found",
-      } , {status: 400});
+      return NextResponse.json(
+        {
+          message: "user not found",
+        },
+        { status: 400 }
+      );
     }
     const checkPassword = await bcrypt.compare(password, user.password); // Changed line: Added `await` to `bcrypt.compare`
     if (!checkPassword) {

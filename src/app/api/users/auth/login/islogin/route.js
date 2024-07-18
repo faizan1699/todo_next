@@ -17,6 +17,17 @@ export async function POST(req) {
 
     const currentTime = Math.floor(Date.now() / 1000);
 
+    const user = await User.findOne({ email });
+    const isblock = user.isuserblock;
+
+    if (!user) {
+      return NextResponse.json({ message: "user not found" }, { status: 404 });
+    }
+
+    if (isblock) {
+      return NextResponse.json({ message: "your account is blocked" }, { status: 403 });
+    }
+
     if (jwtToken) {
       if (decoded.exp && currentTime <= decoded.exp) {
         if (email === decoded.email) {

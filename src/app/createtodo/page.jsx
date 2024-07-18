@@ -43,8 +43,6 @@ const CreateTodo = () => {
 
   };
 
-
-
   const handleSavetodo = async (e) => {
     e.preventDefault()
 

@@ -3,12 +3,50 @@ import User from "@/app/models/usermodel";
 import ContactModel from "@/app/models/Contact";
 import { NextResponse } from "next/server";
 import { DateTime } from "luxon";
+import { countMessageWord } from "@/app/utils/countwords/countwords";
+
+// function countMessageWord(message) {
+//   const wordRegex = /\b\w+\b/g;
+//   const matches = message.match(wordRegex);
+//   return matches ? matches.length : 0;
+// }
 
 export async function POST(req) {
   await connect();
   try {
     const reqbody = await req.json();
     const { name, email, message, contact } = reqbody;
+
+    if (!email && !message && !name) {
+      return NextResponse.json(
+        { message: "name email and message required" },
+        { status: 400 }
+      );
+    }
+    if (!email) {
+      return NextResponse.json({ message: "email required" }, { status: 422 });
+    }
+    if (name.length < 4) {
+      return NextResponse.json(
+        { message: "name must be 4 chracters" },
+        { status: 422 }
+      );
+    }
+
+    const checkMessageLength = countMessageWord(message);
+
+    if (checkMessageLength < 5) {
+        return NextResponse.json(
+            { message: "message must be 5 words" },
+            { status: 422 }
+        );
+    }
+    if (contact && contact.length < 10) {
+      return NextResponse.json(
+        { message: "contact must be 10 numbers" },
+        { status: 422 }
+      );
+    }
 
     const user = await User.findOne({ email });
 

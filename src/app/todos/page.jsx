@@ -1,16 +1,16 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import axios from 'axios';
 import Image from 'next/image';
 import loader from '../assets/loader/loader.gif';
+import SmoothScroll from 'smooth-scroll';
 
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faEdit, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-
-const Todo = ({ refreshTodos, setEdit }) => {
+const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
 
   const maxLength = 1050;
   const labelClasses = "block text-sm font-medium leading-6 text-white ";
@@ -54,6 +54,10 @@ const Todo = ({ refreshTodos, setEdit }) => {
 
   useEffect(() => {
     handleGetTodo();
+    setTimeout(() => {
+      setTodosUpdated(false);
+    }, 1500);
+
   }, [refreshTodos]);
 
   const handleGetTodo = async () => {
@@ -88,6 +92,7 @@ const Todo = ({ refreshTodos, setEdit }) => {
   }, [todovalue]);
 
   const updateTodo = (index, id, title, description) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsEdit(true);
     setEdit(false);
     toast.info("now you can edit user");
@@ -142,12 +147,13 @@ const Todo = ({ refreshTodos, setEdit }) => {
     const formattedDateString = `${formattedDate.getDate()}-${formattedDate.getMonth() + 1}-${shortYear} ${formattedDate.getHours()}:${formattedDate.getMinutes()}`;
     return formattedDateString;
   }
+  const scroll = useRef(null);
 
   return (
 
     <>
 
-      {isedit && <div className="flex min-h-full flex-1 flex-col justify-center px-2 py-12 bg-gray-800 my-3 rounded-lg">
+      {isedit && <div className="flex min-h-full flex-1 flex-col justify-center px-2 py-6 bg-gray-800 rounded-lg">
         <div className="flex justify-between items-center">
           <div className='updatetodoDivempty'></div>
           <h3 className='text-center text-4xl text-nowrap text-extrabold text-gray-400 mx-auto'>Update Todo</h3>
