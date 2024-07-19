@@ -36,10 +36,10 @@ export async function POST(req) {
     const checkMessageLength = countMessageWord(message);
 
     if (checkMessageLength < 5) {
-        return NextResponse.json(
-            { message: "message must be 5 words" },
-            { status: 422 }
-        );
+      return NextResponse.json(
+        { message: "message must be 5 words" },
+        { status: 422 }
+      );
     }
     if (contact && contact.length < 10) {
       return NextResponse.json(
@@ -52,7 +52,7 @@ export async function POST(req) {
 
     if (!user) {
       return NextResponse.json(
-        { message: "you are not registerd pls register your account" },
+        { message: "pls provide your registerd email" },
         { status: 403 }
       );
     }

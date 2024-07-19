@@ -12,8 +12,6 @@ import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { NavbarHitFunction } from '../components/rootcomponent/page';
-import { useEffect } from 'react';
-
 
 const Login = () => {
 
@@ -78,34 +76,6 @@ const Login = () => {
             }
         }
     };
-
-    useEffect(() => {
-        CheckuserLoginStatus()
-    }, []);
-
-    const CheckuserLoginStatus = async () => {
-        const x = localStorage.getItem("userToken");
-        if (x) {
-            setPageLoad(true);
-            const data = JSON.parse(x);
-            const email = data.email;
-            try {
-                const response = await axios.post("/api/users/auth/login/islogin", { email })
-                if (response.status === 200) {
-                    toast.success(response?.data?.message);
-                    router.push("/");
-                    setPageLoad(false);
-                } else {
-                    router.push("/login");
-                    setPageLoad(false);
-                }
-            }
-            catch (error) {
-                toast.error(error?.response?.data?.message);
-                setPageLoad(false);
-            }
-        }
-    }
 
     return (
         <>

@@ -46,7 +46,7 @@ const CreateTodo = () => {
   const handleSavetodo = async (e) => {
     e.preventDefault()
 
-    const x = window.localStorage.getItem("userToken")
+    const x = localStorage.getItem("userToken")
     if (x) {
       setLoading(true);
       const y = JSON.parse(x);

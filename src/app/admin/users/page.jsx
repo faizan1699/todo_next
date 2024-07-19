@@ -103,7 +103,7 @@ const Users = () => {
                     setFilteredUsers(response?.data?.usersdata);
                 }
             } catch (error) {
-                console.log(error);
+                // console.log(error);
                 setLoading(false);
             }
             if (usertype === "user") {
@@ -142,14 +142,14 @@ const Users = () => {
         })
     }
 
-    const handelUserEdit = (id, email, username, isAdmin, isemailverified) => {
-        setUserValue({ id, username, email, isAdmin, isemailverified });
+    const handelUserEdit = (id, email, username, isAdmin, isemailverified, isSuperAdmin) => {
+        setUserValue({ id, username, email, isAdmin, isemailverified, isSuperAdmin });
         setIsEdit(true);
         toast.info("you can edit user in user form");
     };
 
     const handleDeleteUser = async (id) => {
-        console.log("dlete user");
+        // console.log("dlete user");
         try {
             const response = await axios.delete('/api/users/userdata/allusersprofiles', { data: { id } });
             toast.success(response?.data?.message);
@@ -201,7 +201,7 @@ const Users = () => {
     const blockUserFunction = async ({ id, setup }) => {
         try {
             const response = await axios.put(`/api/users/userdata/allusersprofiles/${setup}`, { id });
-            console.log(response);
+            // console.log(response);
             if (response?.data?.status === 200) {
                 toast.success(response?.data?.message);
                 router.push(-1);

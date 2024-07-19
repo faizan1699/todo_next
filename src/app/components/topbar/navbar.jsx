@@ -17,7 +17,6 @@ import axios from 'axios';
 const authnav = [
     { name: 'Login', href: '/login' },
     { name: 'Signup', href: '/signup' },
-    { name: 'Contact', href: '/contact' },
 ];
 
 const usernav = [
@@ -118,13 +117,13 @@ const Navbar = () => {
         try {
             const response = await axios.get("/api/users/auth/logout");
             toast.success(response?.data?.message);
+            setNavmap(authnav);
             setUserInfo({});
             setIsAdmin(null);
-            setNavmap(authnav);
+            router.push("/login");
         } catch (error) {
             toast.error(error?.response?.data?.message);
         }
-        router.push("/login");
     }
 
     return (

@@ -61,8 +61,8 @@ const SendMessage = () => {
         toast.error(error?.response?.data?.message);
       }
       else if (error?.response?.status === 403) {
-        router.push('/signup');
-      }
+        toast.info(error?.response?.data?.message);
+       }
       else if (error?.response?.status === 400) {
         toast.error(error?.response?.data?.message);
       }
