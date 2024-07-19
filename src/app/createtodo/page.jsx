@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { toast } from "react-toastify";
 
 import axios from "axios";
@@ -8,37 +8,31 @@ import loader from "@/app/assets/loader/loader.gif"
 import Todo from "../todos/page";
 import Image from "next/image";
 
+import { EditTodoContext } from "../components/rootcomponent/page";
+
 const CreateTodo = () => {
 
   const maxLength = 1050;
   const labelClasses = "block text-sm font-medium leading-6 text-white";
 
+  const { editTodo } = useContext(EditTodoContext);
   const [loading, setLoading] = useState(false);
   const [todosUpdated, setTodosUpdated] = useState(false);
-  const [edit, setEdit] = useState(true);
   const [input, setInput] = useState({
     title: "",
     description: ""
   });
-  const [charCount, setCharCount] = useState(0); // State for character count
+  const [charCount, setCharCount] = useState(0);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "description") {
-      // Calculate character count and enforce max length
-
       if (value.length <= maxLength) {
-        setInput({
-          ...input,
-          [name]: value
-        });
+        setInput({ ...input, [name]: value });
         setCharCount(value.length);
       }
     } else {
-      setInput({
-        ...input,
-        [name]: value
-      });
+      setInput({ ...input, [name]: value });
     }
 
   };
@@ -46,7 +40,7 @@ const CreateTodo = () => {
   const handleSavetodo = async (e) => {
     e.preventDefault()
 
-    const x = localStorage.getItem("userToken")
+    const x = localStorage.getItem("userToken");
     if (x) {
       setLoading(true);
       const y = JSON.parse(x);
@@ -72,10 +66,10 @@ const CreateTodo = () => {
   return (
 
     <div className="flex min-h-full flex-1 justify-center flex-col md:px-6 px-1 py-12 lg:px-8">
-      {edit && <div className="bg-gray-800 rounded-lg mb-3 py-10  px-2">
+      {editTodo && <div className="bg-gray-800 lg:w-3/4 mx-auto md:w-3/4 rounded-lg mb-3 py-10  px-2">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <p className="mt-1 text-gray-400 text-extrabold text-3xl text-center font-bold">CREATE TODO</p>
-              </div>
+          <p className="text-gray-400 text-extrabold text-3xl text-center font-bold">CREATE TODO</p>
+        </div>
 
         <div className="mt-5  rounded-lg sm:mx-auto md:w-9/12 w-full">
           <form method="POST" onSubmit={handleSavetodo} className="space-y-3">
@@ -129,7 +123,7 @@ const CreateTodo = () => {
         </div>
       </div>}
 
-      <Todo setEdit={setEdit} refreshTodos={todosUpdated} setTodosUpdated={setTodosUpdated} />
+      <Todo refreshTodos={todosUpdated} setTodosUpdated={setTodosUpdated} />
 
     </div>
 

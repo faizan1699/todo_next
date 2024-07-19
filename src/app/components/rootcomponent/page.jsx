@@ -3,8 +3,8 @@
 import { createContext, useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 
-import dynamic from "next/dynamic";
 import 'react-toastify/dist/ReactToastify.css';
+import dynamic from "next/dynamic";
 import LoadingPage from "../loadingpage/loadingpage";
 
 const Navbar = dynamic(() => import("@/app/components/topbar/navbar"), {
@@ -17,12 +17,14 @@ export const loadingpage = createContext(null);
 export const setLoadingPage = createContext(null);
 export const setUserTypeContext = createContext(null);
 export const sendusertype = createContext(null);
+export const EditTodoContext = createContext(null);
 
 const RootComponent = ({ children }) => {
 
   const [func, setFunc] = useState(null);
   const [loading, setLoading] = useState(false);
   const [usertype, setUserType] = useState(null);
+  const [editTodo, setEditTodo] = useState(true);
 
   if (func === true) {
     setTimeout(() => {
@@ -55,28 +57,34 @@ const RootComponent = ({ children }) => {
   }, []);
 
   return (
-    <NavbarHitFunction.Provider value={setFunc}>
-      <navfunc.Provider value={func}>
-        <loadingpage.Provider value={loading}>
-          <setLoadingPage.Provider value={setLoading}>
-            <setUserTypeContext.Provider value={setUserType}>
-              <sendusertype.Provider value={usertype}>
-             
-                <Navbar />
-                <LoadingPage />
-                <ToastContainer
-                  position="top-center"
-                  autoClose={3000}
-                  closeOnClick
-                />
-                {children}
 
-              </sendusertype.Provider>
-            </setUserTypeContext.Provider>
-          </setLoadingPage.Provider>
-        </loadingpage.Provider>
-      </navfunc.Provider>
-    </NavbarHitFunction.Provider>
+    <>
+      <EditTodoContext.Provider value={{ editTodo, setEditTodo }}>
+        <NavbarHitFunction.Provider value={setFunc}>
+          <navfunc.Provider value={func}>
+            <loadingpage.Provider value={loading}>
+              <setLoadingPage.Provider value={setLoading}>
+                <setUserTypeContext.Provider value={setUserType}>
+                  <sendusertype.Provider value={usertype}>
+
+                    <Navbar />
+                    <LoadingPage />
+                    <ToastContainer
+                      position="top-center"
+                      autoClose={3000}
+                      closeOnClick
+                    />
+                    {children}
+
+                  </sendusertype.Provider>
+                </setUserTypeContext.Provider>
+              </setLoadingPage.Provider>
+            </loadingpage.Provider>
+          </navfunc.Provider>
+        </NavbarHitFunction.Provider>
+      </EditTodoContext.Provider>
+    </>
+
   )
 }
 
