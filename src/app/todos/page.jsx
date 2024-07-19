@@ -1,18 +1,22 @@
-"use client"
-import React, { useEffect, useRef, useState } from 'react';
+"use client";
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import Image from "next/image";
+import loader from "../assets/loader/loader.gif";
 
-import axios from 'axios';
-import Image from 'next/image';
-import loader from '../assets/loader/loader.gif';
-import SmoothScroll from 'smooth-scroll';
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt, faEdit, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { setEditContexts } from "../createtodo/page";
+import { SetTodosUpdatedContext } from "../createtodo/page";
 
-import { toast } from 'react-toastify';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faEdit, faXmark } from '@fortawesome/free-solid-svg-icons';
-
-const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
+const Todo = ({ refreshTodos }) => {
 
   const maxLength = 1050;
+  
+  const setEdit = useContext(SetEditContext);
+  const setTodosUpdated = useContext(SetTodosUpdatedContext);
+
   const labelClasses = "block text-sm font-medium leading-6 text-white ";
   const readmoreclass = "text-red-500 hover:underline focus:outline-none ml-2";
   const readlessclass = "text-blue-500 hover:underline focus:outline-none ml-2";
@@ -58,7 +62,7 @@ const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
       setTodosUpdated(false);
     }, 1500);
 
-  }, [refreshTodos ]);
+  }, [refreshTodos]);
 
   const handleGetTodo = async () => {
     setLoading(true);
@@ -92,10 +96,12 @@ const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
   }, [todovalue]);
 
   const updateTodo = (index, id, title, description) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     setIsEdit(true);
     setEdit(false);
-    toast.info("now you can edit user");
+    toast.info("you can edit user");
     setTodoValue({
       id, title, description
     })
@@ -153,7 +159,7 @@ const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
 
     <>
 
-      {isedit && <div className="flex min-h-full flex-1 flex-col justify-center px-2 py-6 bg-gray-800 rounded-lg">
+      {isedit && <div className="flex min-h-full flex-1 flex-col justify-center px-2 py-6 bg-gray-800 rounded-lg mt-2">
         <div className="flex justify-between items-center">
           <div className='updatetodoDivempty'></div>
           <h3 className='text-center text-4xl text-nowrap text-extrabold text-gray-400 mx-auto'>Update Todo</h3>
@@ -215,7 +221,7 @@ const Todo = ({ refreshTodos, setEdit, setTodosUpdated }) => {
 
       </div>}
 
-      <div className="mt-10 sm:mx-auto md:w-12/12 py-10 w-full bg-gray-800 rounded-lg px-2 flex justify-center">
+      <div className="mt-10 lg:w-4/4 md:w-4/4 mx-auto py-10 w-full bg-gray-800 rounded-lg px-2 flex justify-center m-auto w-full">
 
         <div>
 
