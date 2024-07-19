@@ -114,12 +114,14 @@ const Navbar = () => {
     // Function to handle logout
     const handleLogout = async () => {
         localStorage.removeItem("userToken");
+        setNavmap([]);
+        setNavmap(authnav);
         try {
             const response = await axios.get("/api/users/auth/logout");
             toast.success(response?.data?.message);
-            setNavmap(authnav);
             setUserInfo({});
             setIsAdmin(null);
+            setSuperAdmin(null);
             router.push("/login");
         } catch (error) {
             toast.error(error?.response?.data?.message);
@@ -225,6 +227,27 @@ const Navbar = () => {
                             </DisclosureButton>
                         ))}
                     </div>
+                    <Menu as="div" className="relative ml-3">
+                        <div className='flex items-center justify-between'>
+                            <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                <Image
+                                    src={logo}
+                                    className="border-2 h-8 w-8 rounded-full"
+                                    style={{ minWidth: 35, minHeight: 35 }}
+                                    alt="logo"
+                                />
+                            </MenuButton>
+                            {userinfo &&
+                                <div className="flex text-white flex-col items-center justify-center pl-2">
+                                    {userdata && (
+                                        <>
+                                            <div className="text-start text-nowrap">{userinfo === "undefined" && userinfo.username.length <= 7 ? userinfo.username : userinfo.username.slice(0, 8) + " " + "..."}</div>
+                                            <div className="text-start text-green-500 underline text-nowrap" style={{ fontSize: 12 }}>{userstatus}</div>
+                                        </>
+                                    )}
+                                </div>}
+                        </div>
+                    </Menu>
                 </DisclosurePanel>
             </Disclosure>
         </>

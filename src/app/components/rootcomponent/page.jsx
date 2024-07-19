@@ -56,6 +56,21 @@ const RootComponent = ({ children }) => {
     }
   }, []);
 
+
+  useEffect(() => {
+    const handleWarning = (event) => {
+      if (event.message.includes('Extra attributes from the server: cz-shortcut-listen')) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    window.addEventListener('warn', handleWarning);
+    return () => {
+      window.removeEventListener('warn', handleWarning);
+    };
+  }, []);
+
+
   return (
 
     <>

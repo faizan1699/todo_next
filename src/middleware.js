@@ -5,11 +5,6 @@ export function middleware(request) {
   // Retrieve the token from cookies
   const token = request.cookies.get("token")?.value;
 
-  // Log if no token is found (for debugging purposes)
-  if (!token) {
-    console.log("No token found");
-  }
-
   // Define paths that should not be accessible if the user is already logged in
   const isUserLoginNotAccess =
     request.nextUrl.pathname === "/login" ||
