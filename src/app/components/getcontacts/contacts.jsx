@@ -140,7 +140,7 @@ const Contacts = ({ showmsg, setGetMsg, getmsg }) => {
                                     </div>
                                 ))
                             ) : (
-                                <div className="text-white flex justify-center">
+                                <div className="text-white flex justify-center" style={{marginBottom: -24}}>
                                     <div className='bg-zinc-500 rounded-t-3xl py-2 px-8'>
                                         Nothing to show
                                     </div>
