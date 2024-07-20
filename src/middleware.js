@@ -27,7 +27,6 @@ export function middleware(request) {
 
   try {
     const tokenPayload = JSON.parse(atob(token.split(".")[1]));
-
   } catch (error) {
     console.log("Invalid token:", error);
     return NextResponse.redirect(new URL("/login", request.url));
@@ -40,6 +39,7 @@ export function middleware(request) {
 // Define the paths that the middleware should apply to
 export const config = {
   matcher: [
+    "/",
     "/admin/:path*",
     "/createtodo",
     "/todos",
