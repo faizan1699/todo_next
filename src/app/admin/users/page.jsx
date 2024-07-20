@@ -58,9 +58,7 @@ const Users = () => {
             setFilteredUsers(filtered);
         }
     };
-    ;
-
-
+    
     const token = localStorage.getItem("userToken");
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -68,6 +66,7 @@ const Users = () => {
             ...updateuser,
             [name]: value
         });
+
     };
 
     useEffect(() => {

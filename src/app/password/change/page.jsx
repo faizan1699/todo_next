@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import axios from 'axios';
 import Image from 'next/image';
-import Loader from '../assets/loader/loader.gif';
+import Loader from "../../assets/loader/loader.gif";
 
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';

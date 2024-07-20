@@ -48,6 +48,7 @@ const userSchema = mongoose.Schema({
 
   verifyemailtoken: String,
   verifyemailtokenexpiry: { type: Date },
+  userverificationDate: { type: Date },
 });
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);

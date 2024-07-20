@@ -1,11 +1,16 @@
+
 import User from "@/app/models/usermodel";
 import connect from "@/app/dbconfig/dbconfig";
+
 import { NextResponse } from "next/server";
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function PUT(req) {
+
   await connect();
+  
   try {
     const token = req.cookies.get("token");
     const tokenValue = token && typeof token === "object" ? token.value : token;
@@ -45,7 +50,10 @@ export async function PUT(req) {
     }
 
     if (newpassword.length < 8) {
-      return NextResponse.json({ message: "pasword must be 8 chracters" }  , {status: 422});
+      return NextResponse.json(
+        { message: "new pasword must be 8 chracters" },
+        { status: 400 }
+      );
     }
 
     if (!user) {

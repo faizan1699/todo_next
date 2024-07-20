@@ -40,7 +40,7 @@ const Navbar = () => {
     const islogin = useContext(navfunc);
     const setUserType = useContext(setUserTypeContext);
 
-    const [userinfo, setUserInfo] = useState({});
+    const [userinfo, setUserInfo] = useState();
     const [activelink, setActiveLink] = useState("");
     const [navmap, setNavmap] = useState(authnav);
     const [isadmin, setIsAdmin] = useState(null);
@@ -188,7 +188,8 @@ const Navbar = () => {
                                     </MenuButton>
                                     {userinfo &&
                                         <div className="flex text-white flex-col items-center justify-center pl-2">
-                                            <div className="text-start text-nowrap">{userinfo.username.length < 8 ? userinfo.username : userinfo.username.slice(0, 8) + " " + "..."}</div>
+                                            {/* <div className="text-start text-nowrap">{userinfo.username.length < 8 ? userinfo.username : userinfo.username.slice(0, 8) + " " + "..."}</div> */}
+                                            <div className="text-start text-nowrap">{userinfo.username}</div>
                                             <div className="text-start text-green-500 underline text-nowrap" style={{ fontSize: 12 }}>{userstatus}</div>
                                         </div>}
                                 </div>
@@ -197,7 +198,7 @@ const Navbar = () => {
                                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                                 >
                                     <MenuItem>
-                                        <Link href="/changepassword" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">Change Password</Link>
+                                        <Link href="/password/change" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">Change Password</Link>
                                     </MenuItem>
                                     <MenuItem>
                                         <div className='flex justify-center'>
@@ -227,27 +228,6 @@ const Navbar = () => {
                             </DisclosureButton>
                         ))}
                     </div>
-                    <Menu as="div" className="relative ml-3">
-                        <div className='flex items-center justify-between'>
-                            <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <Image
-                                    src={logo}
-                                    className="border-2 h-8 w-8 rounded-full"
-                                    style={{ minWidth: 35, minHeight: 35 }}
-                                    alt="logo"
-                                />
-                            </MenuButton>
-                            {userinfo &&
-                                <div className="flex text-white flex-col items-center justify-center pl-2">
-                                    {userdata && (
-                                        <>
-                                            <div className="text-start text-nowrap">{userinfo === "undefined" && userinfo.username.length <= 7 ? userinfo.username : userinfo.username.slice(0, 8) + " " + "..."}</div>
-                                            <div className="text-start text-green-500 underline text-nowrap" style={{ fontSize: 12 }}>{userstatus}</div>
-                                        </>
-                                    )}
-                                </div>}
-                        </div>
-                    </Menu>
                 </DisclosurePanel>
             </Disclosure>
         </>

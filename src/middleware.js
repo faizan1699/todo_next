@@ -4,11 +4,12 @@ import { NextResponse } from "next/server";
 export function middleware(request) {
   // Retrieve the token from cookies
   const token = request.cookies.get("token")?.value;
-
+  const reqpath = request.nextUrl.pathname;
   // Define paths that should not be accessible if the user is already logged in
   const isUserLoginNotAccess =
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname === "/signup";
+    reqpath === "/login" ||
+    reqpath === "/signup" ||
+    reqpath === "/password/forget";
 
   // If the user tries to access login or signup and is already authenticated, redirect to home page
   if (isUserLoginNotAccess) {
@@ -43,9 +44,10 @@ export const config = {
     "/admin/:path*",
     "/createtodo",
     "/todos",
-    "/changepassword",
+    "/password/change",
     "/contact",
     "/signup",
     "/login",
+    "/password/forget",
   ],
 };

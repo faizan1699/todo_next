@@ -1,9 +1,12 @@
 import connect from "@/app/dbconfig/dbconfig";
 
 import User from "@/app/models/usermodel";
-import sendMail from "@/app/utils/nodemailer/nodemailer";
+import { sendMailVerification } from "@/app/utils/nodemailer/verifyemail";
+
 import bcryptjs from "bcryptjs";
+
 import { NextResponse } from "next/server";
+
 connect();
 
 export async function POST(req) {
@@ -11,6 +14,19 @@ export async function POST(req) {
     const reqBody = await req.json();
 
     const { username, email, password } = reqBody;
+
+    if (username.length > 18) {
+      return NextResponse.json(
+        { message: "Username must be less then 18 character" },
+        { status: 400 }
+      );
+    }
+    if (password.length <= 7) {
+      return NextResponse.json(
+        { message: "password must be 8 chracters" },
+        { status: 400 }
+      );
+    }
 
     const userfind = await User.findOne({ email });
 
@@ -32,11 +48,16 @@ export async function POST(req) {
 
     const saveduser = await newUser.save();
 
-    sendMail({ email });
+    try {
+      sendMailVerification({ useremail: email });
+    } catch (error) {
+      return NextResponse.json({ message: error.message }, { status: 424 });
+    }
 
     return NextResponse.json(
       {
-        message: "user registerd successfully",
+        message:
+          "user registerd and an verification email sent check your email",
         success: true,
         saveduser,
       },

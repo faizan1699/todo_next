@@ -12,7 +12,7 @@ import { EditTodoContext } from "../components/rootcomponent/page";
 
 const CreateTodo = () => {
 
-  const maxLength = 2000;
+  const maxLength = 15000;
   const labelClasses = "block text-sm font-medium leading-6 text-white";
 
   const { editTodo } = useContext(EditTodoContext);
@@ -97,7 +97,7 @@ const CreateTodo = () => {
                   <textarea
                     name="title"
                     rows={1}
-                    spellcheck="true"
+                    spellCheck="true"
                     id="titletext"
                     value={input.title}
                     onChange={handleInputChange}
@@ -114,7 +114,7 @@ const CreateTodo = () => {
                   <textarea
                     name="description"
                     rows={2}
-                    spellcheck="true"
+                    spellCheck="true"
                     id="desctext"
                     maxLength={maxLength}
                     value={input.description}

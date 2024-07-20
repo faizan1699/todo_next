@@ -199,6 +199,7 @@ const Todo = ({ refreshTodos }) => {
                   placeholder="Enter title here"
                 />
               </div>
+
             </div>
             <div>
               <label htmlFor="description" className={labelClasses}>
@@ -207,16 +208,18 @@ const Todo = ({ refreshTodos }) => {
               <div className="mt-2">
                 <textarea
                   name="description"
-                  rows={5}
+                  rows={2}
+                  spellCheck="true"
+                  id="descText"
                   maxLength={maxLength}
                   value={input.description}
                   onChange={handleInputChange}
-                  className="resize-y px-2  w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                  className="resize-none block px-2  w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                   placeholder="Enter description here"
                 />
               </div>
               <p className="mt-2 text-sm text-gray-500 text-right" style={{ fontSize: 12 }}>
-                {charCount}/{maxLength} characters
+                Words: {wordCount}, Characters: {charCount}/{maxLength}
               </p>
             </div>
             <div>

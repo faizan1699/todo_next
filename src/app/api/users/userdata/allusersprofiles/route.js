@@ -4,9 +4,30 @@ import { NextResponse } from "next/server";
 import { DateTime } from "luxon";
 import jwt from "jsonwebtoken";
 
-import { getUserToken } from "@/app/utils/jwt/token";
 
 connect();
+
+async function getUserToken(req) {
+  const tokenCookie = req.cookies.get("token");
+
+  const token =
+    tokenCookie && typeof tokenCookie === "object"
+      ? tokenCookie.value
+      : tokenCookie;
+
+  if (!token) {
+    return NextResponse.json({ message: "No token provided" }, { status: 403 });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    return NextResponse.json({ message: "Invalid token" }, { status: 403 });
+  }
+
+  return decoded;
+}
 
 export async function POST(req) {
   try {
@@ -83,7 +104,7 @@ export async function DELETE(req) {
 export async function PUT(req) {
   try {
     const token = await getUserToken(req);
-
+    console.log("token from jwt file", token.email);
     const reqbody = await req.json();
     const {
       id,
@@ -96,10 +117,12 @@ export async function PUT(req) {
     } = reqbody;
 
     const editeremail = token.email;
+    console.log(editeremail);
     const editer = await User.findOne({ email: editeremail });
 
     const idEditersuperAdmin = await editer.isSuperAdmin;
 
+    console.log("isSuperAdmin", idEditersuperAdmin);
     const user = await User.findById({ _id: id });
 
     if (!user) {
@@ -137,7 +160,12 @@ export async function PUT(req) {
     user.isAdmin = isAdmin;
     user.userUpdatedby = updatedby;
     user.userUpdatedOn = currentDateTime.toJSDate();
-    user.isSuperAdmin = isSuperAdmin;
+
+    if (typeof isSuperAdmin !== "undefined") {
+      user.isSuperAdmin = isSuperAdmin;
+    } else {
+    }
+
     await user.save();
 
     const usersdata = {
@@ -158,10 +186,10 @@ export async function PUT(req) {
       },
       { status: 200 }
     );
-    console.log(response);
+
     return response;
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
