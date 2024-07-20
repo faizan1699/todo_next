@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import loader from '../assets/loader/loader.gif';
-import SmoothScroll from 'smooth-scroll';
 
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,6 +28,7 @@ const Todo = ({ refreshTodos }) => {
   const [truncdesc, setTruncDesc] = useState(-1);
   const [todovalue, setTodoValue] = useState({});
   const [charCount, setCharCount] = useState(0);
+  const [wordCount, setWordCount] = useState(0);
 
   const [input, setInput] = useState({
     title: "",
@@ -36,31 +36,42 @@ const Todo = ({ refreshTodos }) => {
     iscompleted: ""
   });
 
+  const countWords = (text) => {
+    const words = text.split(/\s+/);  // Split the text by spaces (and handle multiple spaces)
+    const numWords = words.filter(word => word.length > 0).length;  // Filter out any empty strings
+    return numWords;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "description") {
       if (value.length <= maxLength) {
-        setInput({
-          ...input,
-          [name]: value
-        });
+        setInput({ ...input, [name]: value });
         setCharCount(value.length);
+        setWordCount(countWords(value));
       }
     } else {
-      setInput({
-        ...input,
-        [name]: value
-      });
+      setInput({ ...input, [name]: value });
     }
   };
+  useEffect(() => {
+    const textArea = document.getElementById('titletext');
+    const dtextArea = document.getElementById('descText');
+
+    if (textArea) {
+      textArea.style.height = 'auto';
+      textArea.style.height = `${textArea.scrollHeight}px`;
+    }
+
+    if (dtextArea) {
+      dtextArea.style.height = "auto";
+      dtextArea.style.height = `${dtextArea.scrollHeight}px`;
+    }
+
+  }, [input.title, input.description]);
 
   useEffect(() => {
     handleGetTodo();
-    // setTimeout(() => {
-    //   setTodosUpdated(false);
-    // }, 1500);
-
   }, [refreshTodos]);
 
   const handleGetTodo = async () => {
@@ -126,6 +137,8 @@ const Todo = ({ refreshTodos }) => {
       });
       setIsEdit(false);
       setEditTodo(true);
+      setCharCount(0);
+      setWordCount(0);
     } catch (error) {
       // console.log(error);
       setFormLoading(false);
@@ -169,17 +182,20 @@ const Todo = ({ refreshTodos }) => {
 
         <div className="mt-10 sm:mx-auto md:w-9/12 w-full">
           <form method="POST" onSubmit={handleUpdatetodo} className="space-y-3">
+
             <div>
               <label htmlFor="title" className={labelClasses}>
-                Todo title:
+                Todo Title:
               </label>
               <div className="mt-2">
-                <input
+                <textarea
                   name="title"
-                  type="text"
+                  rows={1}
+                  id="titletext"
                   value={input.title}
+                  maxLength={maxLength}
                   onChange={handleInputChange}
-                  className="px-2  w-full rounded-md border-0 py-3 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                  className="resize-none block px-2  w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
                   placeholder="Enter title here"
                 />
               </div>

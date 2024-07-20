@@ -16,6 +16,7 @@
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "gh-pages": "^6.1.1",
     "jquery": "^3.7.1",
