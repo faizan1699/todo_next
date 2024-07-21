@@ -11,16 +11,14 @@ export function middleware(request) {
     reqpath === "/signup" ||
     reqpath === "/password/forget";
 
-  // If the user tries to access login or signup and is already authenticated, redirect to home page
   if (isUserLoginNotAccess) {
     if (token) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    // Allow access to login or signup if the user is not authenticated
+
     return NextResponse.next();
   }
 
-  // If no token is present and the user tries to access protected routes, redirect to login page
   if (!token) {
     console.log("token not found");
     return NextResponse.redirect(new URL("/login", request.url));
@@ -33,7 +31,6 @@ export function middleware(request) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  // Allow access to the protected route if the token is valid
   return NextResponse.next();
 }
 
