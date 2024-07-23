@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import { DateTime } from "luxon";
 import jwt from "jsonwebtoken";
 
-
 connect();
 
 async function getUserToken(req) {

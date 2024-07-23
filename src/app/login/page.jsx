@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Loader from '../assets/loader/loader.gif';
@@ -18,10 +18,11 @@ const Login = () => {
     const router = useRouter();
     const setNavFunc = useContext(NavbarHitFunction);
 
-    const [pageload, setPageLoad] = useState(null);
     const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
     const [loading, setLoading] = useState(false);
     const [passtype, setPassType] = useState('password');
+    const [verifieduser, setVerifiedUser] = useState(false);
+    const [load, setLoad] = useState(false); // for resend email;
     const [input, setInput] = useState({
         email: '',
         password: '',
@@ -47,9 +48,7 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
         const { email, password } = input;
-
         let validform = true;
 
         if (!email || !password) {
@@ -58,7 +57,7 @@ const Login = () => {
         }
         if (validform) {
             setLoading(true);
-
+            checkVerified(email);
             try {
                 const response = await axios.post('/api/users/auth/login', input);
                 console.log(response)
@@ -71,91 +70,108 @@ const Login = () => {
                 router.push('/');
             } catch (error) {
                 setLoading(false);
-                console.log(error)
                 toast.error(error?.response?.data?.message);
             }
         }
     };
 
+    const resendVerifyemail = async () => {
+        const { email } = input;
+        setLoad(true);
+        try {
+            const response = await axios.post("/api/users/auth/resendemailverification", { email })
+            toast.success(response?.data?.message);
+            setLoad(false);
+        }
+        catch (error) {
+            toast.error(response?.data?.message);
+            setLoad(false);
+        }
+    }
+
+    const checkVerified = async (email) => {
+        try {
+            const response = await axios.post("/api/users/auth/resendemailverification/checkVerifyuser", { email })
+            setVerifiedUser(response?.data?.isemailverified);
+        }
+        catch (error) {
+            setVerifiedUser(error?.response?.data?.isemailverified);
+        }
+    }
+
     return (
         <>
 
-            {pageload ?
-                (<div className='flex justify-center items-center h-screen'>
-                    <Image
-                        src={Loader}
-                        width={50}
-                        alt="loader" />
-                </div>)
-                :
-                (<div className="flex min-h-full flex-1 flex-col justify-center w-full px-6 py-12 lg:px-8">
+            <div className="flex min-h-full flex-1 flex-col justify-center w-full px-6 py-12 lg:px-8">
 
-                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Log in to your account</h2>
-                    </div>
+                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                    <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Log in to your account</h2>
+                </div>
 
-                    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form method="POST" onSubmit={handleLogin} className="space-y-3">
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                    <form method="POST" onSubmit={handleLogin} className="space-y-3">
 
-                            <div>
-                                <label htmlFor="email" className={labelClasses}> Email address  </label>
-                                <div className="mt-2">
-                                    <input
-                                        name="email"
-                                        type="email"
-                                        value={input.email}
-                                        onChange={handleInputChange}
-                                        className="px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
-                                        placeholder='email'
-                                    />
+                        <div>
+                            <label htmlFor="email" className={labelClasses}> Email address  </label>
+                            <div className="mt-2">
+                                <input
+                                    name="email"
+                                    type="email"
+                                    value={input.email}
+                                    onChange={handleInputChange}
+                                    className="px-1 block w-full rounded-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6"
+                                    placeholder='email'
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="password" className={labelClasses}>Password</label>
+                                <div className="text-sm">
+                                    <Link href="/password/forget" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                                        Forgot password?
+                                    </Link>
+                                </div>
+                            </div>
+                            <div className="mt-2 flex border border-gray-300 rounded-md bg-white">
+                                <input
+                                    name="password"
+                                    type={passtype}
+                                    value={input.password}
+                                    onChange={handleInputChange}
+                                    className="px-1 block w-full rounded-md py-2 text-red-900 shadow-sm placeholder:text-gray-300  sm:text-sm sm:leading-6"
+                                    placeholder='password'
+                                    autoComplete='curret-password'
+                                />
+                                <div className="flex items-center justify-center" onClick={handleShowpassword}>
+                                    <FontAwesomeIcon className='px-1' icon={passtype === "password" ? faEye : faEyeSlash} />
                                 </div>
                             </div>
 
-                            <div>
-                                <div className="flex items-center justify-between">
-                                    <label htmlFor="password" className={labelClasses}>Password</label>
-                                    <div className="text-sm">
-                                        <Link href="/password/forget" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                                            Forgot password?
-                                        </Link>
-                                    </div>
-                                </div>
-                                <div className="mt-2 flex border border-gray-300 rounded-md bg-white">
-                                    <input
-                                        name="password"
-                                        type={passtype}
-                                        value={input.password}
-                                        onChange={handleInputChange}
-                                        className="px-1 block w-full rounded-md py-2 text-red-900 shadow-sm placeholder:text-gray-300  sm:text-sm sm:leading-6"
-                                        placeholder='password'
-                                        autoComplete='curret-password'
-                                    />
-                                    <div className="flex items-center justify-center" onClick={handleShowpassword}>
-                                        <FontAwesomeIcon className='px-1' icon={passtype === "password" ? faEye : faEyeSlash} />
-                                    </div>
-                                </div>
+                        </div>
 
-                            </div>
+                        <div>
+                            <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                {loading ? <Image
+                                    src={Loader}
+                                    width={25}
+                                    priority
+                                    alt="loading"
+                                /> : "log in"}
+                            </button>
+                        </div>
+                    </form>
 
-                            <div>
-                                <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                    {loading ? <Image
-                                        src={Loader}
-                                        width={25}
-                                        priority
-                                        alt="loading"
-                                    /> : "log in"}
-                                </button>
-                            </div>
-                        </form>
+                    {verifieduser && <p className="my-2 cursor-pointer text-center text-md text-red-500" onClick={resendVerifyemail}>{load ? "loading pls wait":"Click here to Resend verification email"}</p>}
 
-                        <p className="mt-5 text-center text-sm text-gray-500">
-                            not have account yet?{' '}
-                            <Link href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign Up</Link>
-                        </p>
-                    </div>
-                </div>)
-            }
+                    <p className="mt-5 text-center text-sm text-gray-500">
+                        not have account yet?{' '}
+                        <Link href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign Up</Link>
+                    </p>
+                </div>
+            </div>
+
         </>
     );
 };

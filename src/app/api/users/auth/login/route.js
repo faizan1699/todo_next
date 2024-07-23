@@ -51,7 +51,7 @@ export async function POST(req) {
     };
 
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "30d",
+      expiresIn: "50d",
     });
 
     const userdata = {

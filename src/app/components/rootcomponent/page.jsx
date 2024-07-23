@@ -85,8 +85,8 @@ const RootComponent = ({ children }) => {
                     <Navbar />
                     <LoadingPage />
                     <ToastContainer
-                      position="top-center"
-                      autoClose={3000}
+                      position="bottom-left"
+                      autoClose={2500}
                       closeOnClick
                     />
                     {children}

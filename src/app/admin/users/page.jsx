@@ -53,12 +53,13 @@ const Users = () => {
             const filtered = userdata.filter(user =>
                 user.email.toLowerCase().includes(lowerCaseValue) ||
                 user._id.toLowerCase().includes(lowerCaseValue) ||
+                user.username.toLowerCase().includes(lowerCaseValue) ||
                 (user.isemailverified && lowerCaseValue === 'verified')
             );
             setFilteredUsers(filtered);
         }
     };
-    
+
     const token = localStorage.getItem("userToken");
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -102,7 +103,7 @@ const Users = () => {
                     setFilteredUsers(response?.data?.usersdata);
                 }
             } catch (error) {
-                // console.log(error);
+                toast.error(error?.response?.data?.message);
                 setLoading(false);
             }
             if (usertype === "user") {
@@ -339,7 +340,7 @@ const Users = () => {
                     <div className="flex flex-col mt-10">
                         <div className="flex justify-end align-middle mb-3 mr-3">
                             <div className="flex align-center">
-                                <input type="text" name="search" value={searchinput} onChange={changeSerchInput} className="block w-64 h-11 px-4 py-3.5 text-base text-gray-900 bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none" placeholder="Search user by email or id" />
+                                <input type="text" name="search" value={searchinput} onChange={changeSerchInput} className="block w-64 h-11 px-4 py-3.5 text-base text-gray-900 bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none" placeholder="Search user by any first 3 fields" />
                                 <button onClick={ReloadUsers} className="flex ml-2 items-center bg-gray-800 hover:bg-zinc-700 text-sm text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline">
                                     <FontAwesomeIcon icon={faRedo} className="mr-1" /> RELOAD USERS
                                 </button>

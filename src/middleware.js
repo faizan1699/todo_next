@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
-// Middleware function to handle authentication and redirection
-export function middleware(request) {
-  // Retrieve the token from cookies
-  const token = request.cookies.get("token")?.value;
+import jwt from "jsonwebtoken";
+
+export function middleware(request, res) {
+  const x = request.cookies.get("token");
+  const token = x && typeof x === "object" ? x.value : x;
   const reqpath = request.nextUrl.pathname;
-  // Define paths that should not be accessible if the user is already logged in
+
   const isUserLoginNotAccess =
     reqpath === "/login" ||
     reqpath === "/signup" ||
@@ -20,12 +21,11 @@ export function middleware(request) {
   }
 
   if (!token) {
-    console.log("token not found");
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   try {
-    const tokenPayload = JSON.parse(atob(token.split(".")[1]));
+     JSON.parse(atob(token.split(".")[1]));
   } catch (error) {
     console.log("Invalid token:", error);
     return NextResponse.redirect(new URL("/login", request.url));
@@ -34,7 +34,6 @@ export function middleware(request) {
   return NextResponse.next();
 }
 
-// Define the paths that the middleware should apply to
 export const config = {
   matcher: [
     "/",

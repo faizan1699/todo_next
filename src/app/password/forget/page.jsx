@@ -71,7 +71,7 @@ const ForgetPassword = () => {
         const { password, otp } = input;
 
         setLoading(true);
-  
+
         try {
             const response = await axios.put("/api/users/auth/password/reset", {
                 otp: otp,
@@ -94,6 +94,10 @@ const ForgetPassword = () => {
             toast.error(error?.response?.data?.message);
         }
     };
+
+    const resendOtpEmail = () => {
+        sentMail(true);
+    }
 
     return (
         <>
@@ -194,6 +198,11 @@ const ForgetPassword = () => {
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div className="flex justify-end mb-2">
+                                        <button className='text-red-400 text-end' type='button' onClick={resendOtpEmail}>OTP email not recieved resend email </button>
+                                    </div>
+
                                     <div className="text-right">
                                         <button type="submit" className={btnClass}>
                                             {loading ? (
