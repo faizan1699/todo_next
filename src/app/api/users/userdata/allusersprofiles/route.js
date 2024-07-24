@@ -36,6 +36,17 @@ export async function POST(req) {
     if (!user) {
       return NextResponse.json({ message: "user not found" });
     }
+
+    const isUserBlock = user.isuserblock;
+    if (isUserBlock) {
+      return NextResponse.json(
+        {
+          message: "you are blocked by admin",
+        },
+        { status: 403 }
+      );
+    }
+
     const isAdmin = (await user.isAdmin) || user.isSuperAdmin;
     if (!isAdmin) {
       return NextResponse.json({

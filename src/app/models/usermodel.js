@@ -42,6 +42,9 @@ const userSchema = mongoose.Schema({
   userUpdatedOn: {
     type: String,
   },
+  profileimg: {
+    type: String,
+  },
 
   forgetpasswordtoken: String,
   forgetpasswordexpiry: { type: Date },

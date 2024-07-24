@@ -13,14 +13,23 @@ export async function POST(req) {
   try {
     const reqBody = await req.json();
 
-    const { username, email, password } = reqBody;
-
+    const { username, email, password, profileimg } = reqBody;
+    // if (!profileimg) {
+    //   return NextResponse.json(
+    //     { message: "pls upload your profile img" },
+    //     { status: 400 }
+    //   );
+    // }
+  
     if (username.length > 18) {
       return NextResponse.json(
         { message: "Username must be less then 18 character" },
         { status: 400 }
       );
     }
+
+   
+
     if (password.length <= 7) {
       return NextResponse.json(
         { message: "password must be 8 chracters" },
@@ -44,6 +53,7 @@ export async function POST(req) {
       username,
       email,
       password: hashedPassword,
+      profileimg,
     });
 
     const saveduser = await newUser.save();
