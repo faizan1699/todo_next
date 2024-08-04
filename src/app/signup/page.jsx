@@ -1,6 +1,7 @@
 
 "use client";
-import React, { useRef, useState } from 'react';
+
+import React, { useContext, useRef, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,13 +11,17 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faMultiply } from '@fortawesome/free-solid-svg-icons';
+import { AddUserContext } from '../components/rootcomponent/page';
 
-const Signup = () => {
+const Signup = ({ formtitle, btntitle }) => {
 
-  const uploadImg = useRef(null);
+  const { setisAddUser ,  setFetchUser } = useContext(AddUserContext);
+
   const router = useRouter();
-  const formInput = "px-1 block w-full rounded-md border-0 py-2 text-red-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6";
+  const uploadImg = useRef(null);
+  const isSignup = window.location.pathname;
   const labelClasses = "block text-sm font-medium leading-6 text-gray-900";
+  const formInput = "px-1 block w-full rounded-md border-0 py-2 text-red-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6";
 
   const [loading, setLoading] = useState(false);
   const [passtype, setPassType] = useState('password');
@@ -34,6 +39,10 @@ const Signup = () => {
       [name]: value
     });
   };
+
+  function hideAddUser() {
+    setisAddUser(false); // from adduser admin page for add register new user
+  }
 
   const handleShowpassword = () => {
     setPassType(passtype === 'text' ? 'password' : 'text');
@@ -78,8 +87,12 @@ const Signup = () => {
           email: '',
           password: ''
         });
-        router.push("/login");
 
+        if (isSignup === "/signup") {
+          router.push("/login");
+        }
+        setFetchUser(true);
+        hideAddUser();  // from adduser admin page for add register new user
       } catch (error) {
         setLoading(false);
         toast.error(error?.response?.data?.message)
@@ -91,7 +104,9 @@ const Signup = () => {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up to your account</h2>
+          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            {isSignup === "/signup" ? "Sign up to your account" : (<div className='d-flex flex justify-between text-black items-center'> <span>{formtitle}</span> <FontAwesomeIcon className='text-red-600 font-extrabold' onClick={hideAddUser} icon={faMultiply} /></div>)}
+          </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
           {profileimg && (
@@ -132,7 +147,7 @@ const Signup = () => {
                 <label htmlFor="password" className={labelClasses}>Password</label>
               </div>
               <div className="mt-1 flex border border-gray-300 rounded-md bg-white">
-                <input name="password" type={passtype} value={input.password} onChange={handleInputChange} autoComplete="current-password" className={formInput} placeholder='password' />
+                <input name="password" type={passtype} value={input.password} onChange={handleInputChange} autoComplete="current-password" className={`${formInput}`} placeholder='password' />
                 <div className="flex items-center justify-center" onClick={handleShowpassword}>
                   <FontAwesomeIcon className='px-1' icon={passtype === "password" ? faEye : faEyeSlash} />
                 </div>
@@ -147,14 +162,14 @@ const Signup = () => {
                     priority
                     alt="loading"
                   />
-                ) : "Sign up"}
+                ) : isSignup === "/signup" ? "Sign up" : btntitle}
               </button>
             </div>
           </form>
-          <p className="mt-5 text-center text-sm text-gray-500">
+          {isSignup === "/signup" && <p className="mt-5 text-center text-sm text-gray-500">
             Already have an account?{' '}
             <Link href="/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">login</Link>
-          </p>
+          </p>}
         </div>
       </div>
     </>

@@ -18,13 +18,16 @@ export const setLoadingPage = createContext(null);
 export const setUserTypeContext = createContext(null);
 export const sendusertype = createContext(null);
 export const EditTodoContext = createContext(null);
+export const AddUserContext = createContext(null);
 
 const RootComponent = ({ children }) => {
 
   const [func, setFunc] = useState(null);
+  const [adduser, setisAddUser] = useState(false);
   const [loading, setLoading] = useState(false);
   const [usertype, setUserType] = useState(null);
   const [editTodo, setEditTodo] = useState(true);
+  const [fetchuser , setFetchUser] = useState(false);
 
   if (func === true) {
     setTimeout(() => {
@@ -57,6 +60,7 @@ const RootComponent = ({ children }) => {
   }, []);
 
 
+
   useEffect(() => {
     const handleWarning = (event) => {
       if (event.message.includes('Extra attributes from the server: cz-shortcut-listen')) {
@@ -81,16 +85,18 @@ const RootComponent = ({ children }) => {
               <setLoadingPage.Provider value={setLoading}>
                 <setUserTypeContext.Provider value={setUserType}>
                   <sendusertype.Provider value={usertype}>
+                    <AddUserContext.Provider value={{ adduser, setisAddUser , fetchuser , setFetchUser }}>
 
-                    <Navbar />
-                    <LoadingPage />
-                    <ToastContainer
-                      position="bottom-left"
-                      autoClose={2500}
-                      closeOnClick
-                    />
-                    {children}
+                      <Navbar />
+                      <LoadingPage />
+                      <ToastContainer
+                        position="bottom-left"
+                        autoClose={2500}
+                        closeOnClick
+                      />
+                      {children}
 
+                    </AddUserContext.Provider>
                   </sendusertype.Provider>
                 </setUserTypeContext.Provider>
               </setLoadingPage.Provider>

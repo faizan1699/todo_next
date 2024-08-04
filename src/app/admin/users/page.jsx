@@ -1,22 +1,27 @@
+
 "use client";
 
-import { useContext, useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBan, faEdit, faLock, faLockOpen, faRedo, faRemove, faTrashRestoreAlt } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
 
 import axios from "axios";
 import loader from '../../assets/loader/loader.gif';
 import Image from "next/image";
+import Signup from "@/app/signup/page";
+
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { sendusertype } from "@/app/components/rootcomponent/page";
+import { AddUserContext } from "@/app/components/rootcomponent/page";
 import { setUserTypeContext } from "@/app/components/rootcomponent/page";
+import { faAdd, faBan, faEdit, faLock, faLockOpen, faRedo, faRemove, faTrashRestoreAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Users = () => {
 
     const router = useRouter();
 
     const usertype = useContext(sendusertype);
+    const { adduser, setisAddUser, fetchuser, setFetchUser } = useContext(AddUserContext);
     const usertypeFunction = useContext(setUserTypeContext);
 
     const isAdminclass = "text-red-600 border border-green-400 font-black";
@@ -33,6 +38,8 @@ const Users = () => {
     const [uservalue, setUserValue] = useState({});
     const [searchinput, setSearchInput] = useState("");
     const [isauthenticated, setIsAuthenticated] = useState(false);
+    const [showtext, setShowText] = useState(false);
+
     const [updateuser, setUpdateUser] = useState({
         email: "",
         username: "",
@@ -69,6 +76,17 @@ const Users = () => {
         });
 
     };
+
+    useEffect(() => {
+        fetchAllUsers();
+
+        if (fetchuser) {
+            setTimeout(() => {
+                setFetchUser(false);
+            }, 1500);
+        }
+    }, [fetchuser]);
+
 
     useEffect(() => {
         fetchAllUsers();
@@ -149,7 +167,6 @@ const Users = () => {
     };
 
     const handleDeleteUser = async (id) => {
-        // console.log("dlete user");
         try {
             const response = await axios.delete('/api/users/userdata/allusersprofiles', { data: { id } });
             toast.success(response?.data?.message);
@@ -201,7 +218,6 @@ const Users = () => {
     const blockUserFunction = async ({ id, setup }) => {
         try {
             const response = await axios.put(`/api/users/userdata/allusersprofiles/${setup}`, { id });
-            // console.log(response);
             if (response?.data?.status === 200) {
                 toast.success(response?.data?.message);
                 router.push(-1);
@@ -216,6 +232,10 @@ const Users = () => {
         }
     }
 
+    const AddNewUser = () => {
+        setisAddUser(adduser === true ? false : true);
+    }
+
     const handlelUnBlockUser = async (id, setup) => {
         blockUserFunction({ id, setup: "unblockuser" });
     }
@@ -224,8 +244,17 @@ const Users = () => {
         blockUserFunction({ id, setup: "blockuser" });
     }
 
+    const adduserText = () => {
+        setShowText(true);
+    }
+    const hideText = () => {
+        setShowText(false);
+    }
+
     return (
         <>
+            {adduser && <Signup btntitle="Add User" formtitle={"Add New User"} />}
+
             {!isauthenticated ?
                 (<div div className="mb-6 pt-8">
                     <h3 className="text-center text-gray-400 font-extrabold text-5xl mt-3xl underline">Todo App Users</h3>
@@ -339,10 +368,13 @@ const Users = () => {
 
                     <div className="flex flex-col mt-10">
                         <div className="flex justify-end align-middle mb-3 mr-3">
-                            <div className="flex align-center">
-                                <input type="text" name="search" value={searchinput} onChange={changeSerchInput} className="block w-64 h-11 px-4 py-3.5 text-base text-gray-900 bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none" placeholder="Search user by any first 3 fields" />
-                                <button onClick={ReloadUsers} className="flex ml-2 items-center bg-gray-800 hover:bg-zinc-700 text-sm text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline">
+                            <div className="flex align-center md:flex-row lg:flex:row flex-col">
+                                <input type="text" name="search" value={searchinput} onChange={changeSerchInput} className="block mt-2  w-64 h-11 px-4 py-3.5 text-base text-gray-900 bg-white border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none" placeholder="Search user by any first 3 fields" />
+                                <button onClick={ReloadUsers} className="flex ml-2 mt-2 items-center bg-gray-800 hover:bg-zinc-700 text-sm text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline">
                                     <FontAwesomeIcon icon={faRedo} className="mr-1" /> RELOAD USERS
+                                </button>
+                                <button onClick={AddNewUser} onMouseLeave={hideText} onMouseEnter={adduserText} className="flex ml-2 mt-2 items-center bg-gray-800 hover:bg-zinc-700 text-sm text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline ">
+                                    <div className={showtext === true ? "text-yellow-300 mr-2 font-2xl text-lg font-black transition-opacity duration-300 ease-in-out opacity-50 hover:opacity-100" : ""} > <FontAwesomeIcon className={showtext === true ? "mr-2" : ""}  icon={faAdd} />{showtext && "Add User"}</div>
                                 </button>
                             </div>
                         </div>

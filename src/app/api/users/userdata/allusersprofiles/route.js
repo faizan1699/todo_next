@@ -15,7 +15,7 @@ async function getUserToken(req) {
       : tokenCookie;
 
   if (!token) {
-    return NextResponse.json({ message: "No token provided" }, { status: 403 });
+    return NextResponse.json({ message: "token missing" }, { status: 403 });
   }
 
   let decoded;

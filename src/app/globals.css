@@ -6,11 +6,13 @@ body{
   padding: 0% !important;
 }
 
-input:focus {
+
+input {
   outline: none !important;
 }
 
 input:focus {
+  outline: none !important;
   background-color: #ffff !important;
 }
 
