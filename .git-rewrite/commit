@@ -1,0 +1,6 @@
+tree bd66ce24633bc54498e834a15992d83ba87f2772
+parent a0fbab00e46ca7eeea7d5acf849619f092186298
+author faizan1699 <faizanrasheed169@gmail.com> 1723717488 +0500
+committer faizan1699 <faizanrasheed169@gmail.com> 1723717488 +0500
+
+Remove .env file from tracking
