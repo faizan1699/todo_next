@@ -92,7 +92,7 @@ const Signup = ({ formtitle, btntitle }) => {
           router.push("/login");
         }
         setFetchUser(true);
-        hideAddUser();  // from adduser admin page for add register new user
+        hideAddUser();  
       } catch (error) {
         setLoading(false);
         toast.error(error?.response?.data?.message)

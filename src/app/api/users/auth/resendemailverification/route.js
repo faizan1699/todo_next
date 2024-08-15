@@ -13,7 +13,6 @@ export async function POST(res) {
     const reqBody = await res.json();
     const { email } = reqBody;
 
-
     const user = await User.findOne({ email });
 
     if (!user) {
