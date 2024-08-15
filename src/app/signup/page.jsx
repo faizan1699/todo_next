@@ -120,7 +120,7 @@ const Signup = ({ formtitle, btntitle }) => {
                 alt="Selected file preview"
               />
               <p>{profileimg.name}</p>
-              <FontAwesomeIcon onClick={() => setProfileImg(null)} className='ml-2 text-red-700' icon={faMultiply} />
+             {isSignup !== "/signup"  && <FontAwesomeIcon onClick={() => setProfileImg(null)} className='ml-2 text-red-700' icon={faMultiply} />}
             </div>
           )}
           <form method="POST" onSubmit={handleRegister} className="space-y-3">

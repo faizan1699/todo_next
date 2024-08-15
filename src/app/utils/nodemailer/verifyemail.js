@@ -81,7 +81,7 @@ export const sendMailVerification = async ({ useremail }) => {
   } catch (error) {
     console.error("Error sending email:", error);
     return NextResponse.json(
-      { message: "A server error occurred" },
+      { message: error?.response?.data?.message },
       { status: 500 }
     );
   }
