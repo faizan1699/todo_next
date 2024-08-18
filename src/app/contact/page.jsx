@@ -12,7 +12,7 @@ const SendMessage = () => {
   const router = useRouter();
   const labelClasses = "block text-sm font-medium leading-6 text-white";
   const inputclass = "px-2 w-full rounded-t-md border-0 py-3 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6";
-  const textareaclass = "resize-y px-2 w-full rounded-t-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6";
+  const textareaclass =  "resize-y px-2 w-full rounded-t-md border-0 py-2 text-red-900 ring-1 ring-gray-300 placeholder:text-gray-300 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6";
 
   const [showmsg, setShowMsg] = useState(false);
   const [loading, setLoading] = useState(false);
